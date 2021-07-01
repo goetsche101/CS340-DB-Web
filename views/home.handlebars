@@ -1,0 +1,17 @@
+<h1>Project Data:</h1>
+<br>
+<table>
+  <tr>
+    {{#each data}}
+    <th>{{this.Field}}</th>
+    {{/each}}
+  </tr>
+  <form method="post">
+    <tr>
+      {{#each data}}
+      <td><input type="text" name={{this.Field}} id={{this.Field}}></td>
+      {{/each}}
+      <td><input type = 'submit' name = 'AddRow' value='AddRow'></td>
+    </tr>
+  </form>
+</table>
