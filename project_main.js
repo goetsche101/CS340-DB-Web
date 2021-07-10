@@ -11,7 +11,7 @@ var request = require('request');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(session({secret:'SuperSecretPassword'}));
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set('port', process.argv[2]);
