@@ -15,9 +15,11 @@ app.use(express.static('public'));
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set('port', process.argv[2]);
-context = {};
+
 
 app.get('/', function(req, res, next) {
+
+  var context = {};
   createString = `
   CREATE TABLE IF NOT EXISTS Customers (
     customer_id int NOT NULL AUTO_INCREMENT,
@@ -45,6 +47,7 @@ app.get('/', function(req, res, next) {
 });
 
 app.post('/',function (req,res,next) {
+
   if (req.body['AddRow']) {
     let iString = 'INSERT INTO "Customers" (`password`,`customer_type`,`name`,`phone`,`is_admin`) VALUES ("'+
     +'","'+req.body.password
@@ -65,18 +68,48 @@ app.post('/',function (req,res,next) {
   res.redirect('/')
 }); /*End app.Post('/') */
 
+app.get('/products', function(req, res, next) {
+
+  var context = {
+    products: [
+      {
+        product_id: 1,
+        description: '21 Speed Mountain Bike',
+        in_stock_qty: 50,
+        price: '$500.00'
+      },
+      {
+        product_id: 5,
+        description: '21 Inch LCD Monitor',
+        in_stock_qty: 5,
+        price: '$150.00'
+      },
+      {
+        product_id: 23,
+        description: 'Acoustic Guitar',
+        in_stock_qty: 300,
+        price: '$250.00'
+      },
+    ]
+  };
+  res.render('products',context);
+});
+
 app.get('/other-page',function (req,res) {
+
   res.type('text/plain');
   res.send('Welcome to the other page!');
 });
 
 app.use(function (req, res) {
+
   res.type('text/plain');
   res.status(404);
   res.send('404 - Not Found');
 });
 
 app.use(function (err, req, res, next) {
+
   console.error(err.stack);
   res.type('plain/text');
   res.status(500);
@@ -84,5 +117,6 @@ app.use(function (err, req, res, next) {
 });
 
 app.listen(app.get('port'), function () {
+  
   console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
 });
