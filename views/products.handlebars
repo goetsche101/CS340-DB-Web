@@ -11,7 +11,7 @@
   </thead>
   <tbody>
     {{#each products}}
-      <form method="post" action="/add_to_cart">
+      <form method="post" action="/cart/add">
         <tr>
           <td>
             <input type="hidden" name="product_id" value="{{this.product_id}}">
@@ -20,7 +20,7 @@
           <td>{{this.description}}</td>
           <td>{{this.price}}</td>
           <td>
-            <button class="btn btn-primary" type="submit">
+            <button class="btn btn-secondary" type="submit">
               <strong>
                 <i class="bi bi-cart-plus">&nbsp;</i> Add To Cart
               </strong>
