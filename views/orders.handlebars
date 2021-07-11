@@ -1,0 +1,45 @@
+<h1>Orders:</h1>
+<br>
+<div class="list-group">
+  {{#each orders}}
+    <div class="list-group-item">
+      <div class="d-flex w-100 justify-content-between">
+        <h5 class="mb-1">Shipped On: {{this.shipped_date}}</h5>
+        <small>Ordered On: {{this.created_date}}</small>
+      </div>
+      <h5 class="mb-1">Total Paid: {{this.total_paid}}</h5>
+      <p class="mb-1">
+        Shipped To: {{this.address.address1}} 
+        {{this.address.address2}}, 
+        {{this.address.city}}, 
+        {{this.address.state}} 
+        {{this.address.zip}}
+      </p>
+      <p class="mb-1">Paid with: {{this.payment_method.display_info}}</p>
+      <small>
+        <table class="table table-striped">
+          <thead>
+            <tr class="table-success">
+              <th scope="col">Quantity Ordered</th>
+              <th scope="col">Description</th>
+              <th scope="col">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each this.products}}
+                <tr>
+                  <td>
+                    <input type="hidden" name="product_id" value="{{this.product_id}}">
+                    {{this.ordered_quantity}}
+                  </td>
+                  <td>{{this.description}}</td>
+                  <td>{{this.price}}</td>
+                </tr>
+              </form>
+            {{/each}}
+          </tbody>
+        </table>
+      </small>
+    </div>
+  {{/each}}
+</div>

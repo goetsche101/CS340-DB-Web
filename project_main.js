@@ -127,19 +127,54 @@ app.get('/orders', function(req, res, next) {
   
   // Eventually get orders for customer where not order is not cart, sorted by created_date
   // Also get each order's products, addresses, payment methods
-  // convert dates to JS iso strings here
+  // Do any formatting on attributes here
   context.orders = [
     {
+      order_id: 3,
+      created_date: 'July 8 2021',
+      shipped_date: 'July 10 2021',
+      total_paid: '$400.00',
+      address: {
+        address_id: 2,
+        address1: '246 Other Street',
+        address2: '',
+        city: 'New York City',
+        state: 'NY',
+        zip: 11201
+      },
+      payment_method: {
+        payment_method_id: 2,
+        type: 'PayPal',
+        display_info: 'PayPal: test@test.com'
+      },
+      products: [
+        {
+          product_id: 5,
+          description: '21 Inch LCD Monitor',
+          in_stock_qty: 5,
+          price: '$150.00',
+          ordered_quantity: 1
+        },
+        {
+          product_id: 23,
+          description: 'Acoustic Guitar',
+          in_stock_qty: 300,
+          price: '$250.00',
+          ordered_quantity: 1
+        }
+      ]
+    },
+    {
       order_id: 1,
-      created_date: '2021-01-05T10:15:00.000Z',
-      shipped_date: '2021-01-06T15:30:00.000Z',
+      created_date: 'July 5 2021',
+      shipped_date: 'Awaiting Shipment',
       total_paid: '$500.00',
       address: {
-        address_id,
+        address_id: 1,
         address1: '123 Test Street',
         address2: 'Unit 3',
         city: 'Dallas',
-        state: 'Tx',
+        state: 'TX',
         zip: 76123
       },
       payment_method: {
@@ -153,48 +188,13 @@ app.get('/orders', function(req, res, next) {
           description: '21 Speed Mountain Bike',
           in_stock_qty: 50,
           price: '$500.00',
-          tracking_number: '1ZASDFGSGDASASD'
+          ordered_quantity: 1
         }
       ]
-    },
-    {
-      order_id: 3,
-      created_date: '2021-01-08T01:10:00.000Z',
-      shipped_date: '2021-01-10T05:40:00.000Z',
-      total_paid: '$400.00',
-      address: {
-        address_id,
-        address1: '246 Other Street',
-        address2: '',
-        city: 'New York City',
-        state: 'Ny',
-        zip: 11201
-      },
-      payment_method: {
-        payment_method_id: 2,
-        type: 'PayPal',
-        display_info: 'Email: test@test.com'
-      },
-      products: [
-        {
-          product_id: 5,
-          description: '21 Inch LCD Monitor',
-          in_stock_qty: 5,
-          price: '$150.00',
-          tracking_number: '2ZASDFGSGDASASD'
-        },
-        {
-          product_id: 23,
-          description: 'Acoustic Guitar',
-          in_stock_qty: 300,
-          price: '$250.00',
-          tracking_number: '3ZASDFGSGDASASD'
-        }
-      ]
-    }
+    }    
   ];
 
-  res.render('products', context);
+  res.render('orders', context);
 });
 
 app.use(function (req, res) {
