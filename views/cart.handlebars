@@ -1,0 +1,68 @@
+<h1>Shopping Cart:</h1>
+<br>
+<form method="post" action="/order/create">
+  <h3>Ship To Address:</h3>
+  <div class="list-group">
+    {{#each addresses}}
+      <div class="list-group-item">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="address_id" id="addressRadio{{this.address_id}}">
+          <label class="form-check-label" for="addressRadio{{this.address_id}}">
+          {{this.address1}} {{this.address2}}, {{this.city}}, {{this.state}} {{this.zip}}
+          </label>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+  <a class="btn btn-secondary m-2" href="/addresses">
+    <strong>
+      <i class="bi bi-plus-circle">&nbsp;</i>Add Address
+    </strong>
+  </a>
+  <br>
+  <br>
+  
+  <h3>Payment Method:</h3>
+  <div class="list-group">
+    {{#each payment_methods}}
+      <div class="list-group-item">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="payment_method_id" id="paymentRadio{{this.payment_method_id}}">
+          <label class="form-check-label" for="paymentRadio{{this.payment_method_id}}">{{this.display_info}}</label>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+  <a class="btn btn-secondary m-2" href="/payment-methods">
+    <strong>
+      <i class="bi bi-plus-circle">&nbsp;</i>Add Payment Method
+    </strong>
+  </a>
+  <br>
+  <br>
+
+  <h3>Selected Products:</h3>
+  <table class="table table-striped">
+    <thead>
+      <tr class="table-success">
+        <th scope="col">Quantity</th>
+        <th scope="col">Description</th>
+        <th scope="col">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each cart.products}}
+          <tr>
+            <td>
+              <input type="hidden" name="product_id" value="{{this.product_id}}">
+              <input type="number" name="product_id" min="0", step="1" value="{{this.ordered_quantity}}">
+            </td>
+            <td>{{this.description}}</td>
+            <td>{{this.price}}</td>
+          </tr>
+        </form>
+      {{/each}}
+    </tbody>
+  </table>
+  <button class="btn btn-primary m-2" type="submit"><strong>Place Order</strong></button>
+</form>

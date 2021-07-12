@@ -1,0 +1,33 @@
+<h1>Products:</h1>
+<br>
+<table class="table table-striped table-hover">
+  <thead>
+    <tr class="table-success">
+      <th scope="col">Quantity</th>
+      <th scope="col">Description</th>
+      <th scope="col">Price</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each products}}
+      <form method="post" action="/cart/add">
+        <tr>
+          <td>
+            <input type="hidden" name="product_id" value="{{this.product_id}}">
+            {{this.in_stock_qty}}
+          </td>
+          <td>{{this.description}}</td>
+          <td>{{this.price}}</td>
+          <td>
+            <button class="btn btn-secondary" type="submit">
+              <strong>
+                <i class="bi bi-cart-plus">&nbsp;</i> Add To Cart
+              </strong>
+            </button>
+          </td>
+        </tr>
+      </form>
+    {{/each}}
+  </tbody>
+</table>
