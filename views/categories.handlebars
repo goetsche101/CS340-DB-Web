@@ -1,0 +1,44 @@
+<h1>Categories:</h1>
+<br>
+<table class="table table-striped table-hover">
+  <thead>
+    <tr class="table-success">
+      <th scope="col">Name</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each categories}}
+      <form method="post" action="/categories/delete">
+        <tr>
+          <td>
+            <input type="hidden" name="product_id" value="{{this.category_id}}">
+            <a class="link-secondary" href="/products?category_id={{this.category_id}}">
+              <strong>{{this.category_name}}</strong>
+            </a>
+          </td>
+          <td>
+            {{#if ../loggedInCustomer.is_admin}}
+              <button class="btn btn-danger" type="submit">
+                <strong>
+                  <i class="bi bi-x-circle">&nbsp;</i> Delete
+                </strong>
+              </button>
+            {{/if}}
+          </td>
+        </tr>
+      </form>
+    {{/each}}
+  </tbody>
+</table>
+
+{{#if loggedInCustomer.is_admin}}
+  <form class="row g-3" method="post" action="/categories/add">
+    <div class="col-auto">
+      <input type="text" class="form-control" placeholder="Category">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary mb-3">Add Category</button>
+    </div>
+  </form>
+{{/if}}
