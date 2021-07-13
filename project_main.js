@@ -41,12 +41,18 @@ function getSiteInfo (req, res, next) {
 
 app.use(getSiteInfo);
 
+app.get('/', function(req, res){
+  var context = req.context;
+  context.port = process.argv[2]
+  console.log(context.port)
+  res.render('index', context)
+});
 
-app.get('/', function(req, res, next) {
+app.get('/customers', function(req, res, next) {
 
   var context = req.context;
   createString = `
-  CREATE TABLE IF NOT EXISTS Customers (
+  CREATE TABLE IF NOT EXISTS CUSTOMERS (
     customer_id int NOT NULL AUTO_INCREMENT,
     password varchar(255) NOT NULL,
     customer_type varchar(255) NOT NULL,
@@ -63,18 +69,19 @@ app.get('/', function(req, res, next) {
       }
     })
     /*Create Table */
-  mysql.pool.query('SHOW COLUMNS FROM "Customers"', function(err, rows, fields){
+  mysql.pool.query('SHOW COLUMNS FROM CUSTOMERS', function(err, rows, fields){
     /* Build table header */
+    console.log(rows)
   context.data = rows
   console.log(context.data)
-  res.render('home',context);
+  res.render('customers',context);
   }); /* Select */
 });
 
-app.post('/',function (req,res,next) {
-
+app.post('/customers',function (req,res,next) {
+  console.log(req.body['AddRow'])
   if (req.body['AddRow']) {
-    let iString = 'INSERT INTO "Customers" (`password`,`customer_type`,`name`,`phone`,`is_admin`) VALUES ("'+
+    let iString = 'INSERT INTO CUSTOMERS (`password`,`customer_type`,`name`,`phone`,`is_admin`) VALUES ("'+
     +'","'+req.body.password
     +'","'+req.body.customer_type
     +'","'+req.body.customer_name
@@ -90,14 +97,14 @@ app.post('/',function (req,res,next) {
     }
   }); /* Insert Into */
   }/*end add item if*/
-  res.redirect('/')
+  res.redirect('/customers')
 }); /*End app.Post('/') */
 
 app.get('/products', function(req, res, next) {
 
   // TODO: implement search and get url params
   var context = req.context;
-  
+
   context.products = [
     {
       product_id: 1,
@@ -125,7 +132,7 @@ app.get('/products', function(req, res, next) {
 app.get('/orders', function(req, res, next) {
 
   var context = req.context;
-  
+
   // Eventually get orders for customer where not order is not cart, sorted by created_date
   // Also get each order's products, addresses, payment methods
   // Do any formatting on attributes here
@@ -192,7 +199,7 @@ app.get('/orders', function(req, res, next) {
           ordered_quantity: 1
         }
       ]
-    }    
+    }
   ];
 
   res.render('orders', context);
@@ -201,7 +208,7 @@ app.get('/orders', function(req, res, next) {
 app.get('/cart', function(req, res, next) {
 
   var context = req.context;
-  
+
   context.addresses = [
     {
       address_id: 1,
@@ -286,6 +293,6 @@ app.use(function (err, req, res, next) {
 });
 
 app.listen(app.get('port'), function () {
-  
+
   console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
 });
