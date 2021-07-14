@@ -57,7 +57,7 @@ app.use(customers)
 
 app.get('/products', function(req, res, next) {
 
-  // TODO: implement search and get url params
+  // TODO: implement category filter and search
   var context = req.context;
 
   context.products = [
@@ -82,6 +82,39 @@ app.get('/products', function(req, res, next) {
   ];
 
   res.render('products', context);
+});
+
+
+app.get('/categories', function(req, res, next) {
+
+  var context = req.context;
+  
+  context.categories = [
+    {
+      category_id: 1,
+      category_name: 'Musical Instruments'
+    },
+    {
+      category_id: 2,
+      category_name: 'Computer Parts'
+    },
+    {
+      category_id: 3,
+      category_name: 'Sports Equiptment'
+    },
+  ];
+
+  res.render('categories', context);
+});
+
+app.post('/categories/add', function (req, res, next) {
+
+  res.redirect('/categories');
+});
+
+app.post('/categories/delete', function (req, res, next) {
+
+  res.redirect('/categories');
 });
 
 app.get('/orders', function(req, res, next) {
