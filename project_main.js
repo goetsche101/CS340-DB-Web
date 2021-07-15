@@ -16,7 +16,6 @@ app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set('port', process.argv[2]);
 
-
 // This gets run before every route handler
 function getSiteInfo (req, res, next) {
 
@@ -88,7 +87,7 @@ app.get('/products', function(req, res, next) {
 app.get('/categories', function(req, res, next) {
 
   var context = req.context;
-  
+
   context.categories = [
     {
       category_id: 1,

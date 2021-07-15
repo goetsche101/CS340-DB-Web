@@ -9,14 +9,31 @@
       <th scope="col">Customer Name</th>
       <th scope="col">Phone</th>
       <th scope="col">Admin</th>
-      <th scope="col">Email</th>
       <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
+
+    <tr>
+      {{#each data_rows}}
+        <td>{{this.customer_id}}</td>
+        <td>{{this.password}}</td>
+        <td>{{this.customer_type}}</td>
+        <td>{{this.name}}</td>
+        <td>{{this.phone}}</td>
+        <td>{{this.is_admin}}</td>
+        <td>
+          <form method="post">
+            <input type='hidden' name='customer_id' value = {{this.customer_id}}>
+            <input type = 'submit' name = 'DeleteRow' value='DeleteRow'>
+          </form>
+        </td>
+    </tr>
+      {{/each}}
     <form method="post">
       <tr>
-        {{#each data}}
+        <td></td>
+        {{#each column_list}}
         <td><input type="text" name={{this.Field}} id={{this.Field}}></td>
         {{/each}}
         <td><input type = 'submit' name = 'AddRow' value='AddRow'></td>
