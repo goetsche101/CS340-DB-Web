@@ -44,7 +44,7 @@ router.post('/customers',function (req,res,next) {
       }); /* Insert Into */
   }else if (req.body['DeleteRow']){
     console.log(req.body.customer_id)
-      mysql.pool.query('DELETE FROM customers WHERE customer_id =' + req.body.customer_id, function(err){
+      mysql.pool.query('DELETE FROM Customers WHERE customer_id =' + req.body.customer_id, function(err){
         if(err){
           next(err)
           return
