@@ -7,11 +7,19 @@ module.exports = router
 router.get('/customers', function(req, res, next) {
   var context = req.context
   /* Select */
-  mysql.pool.query('SELECT * FROM CUSTOMERS', function(err, rows, fields){
+  mysql.pool.query('SELECT * FROM Customers', function(err, rows, fields){
     context.data_rows = rows
+    if(err){
+      next(err)
+      return
+    }
     /* Create empty row for insertions */
-    mysql.pool.query('SHOW COLUMNS FROM CUSTOMERS WHERE FIELD != \'customer_id\'', function(err, rows, fields){
+    mysql.pool.query('SHOW COLUMNS FROM Customers WHERE FIELD != \'customer_id\'', function(err, rows, fields){
     context.column_list = rows
+    if(err){
+      next(err)
+      return
+    }
     res.render('customers', context)
     });
   });
@@ -21,7 +29,7 @@ router.post('/customers',function (req,res,next) {
   console.log(req.body)
   if (req.body['AddRow']) {
     console.log('afteraddrow', req.body['AddRow'])
-        let iString = 'INSERT INTO CUSTOMERS (`password`,`customer_type`,`name`,`phone`,`is_admin`) VALUES ("'
+        let iString = 'INSERT INTO Customers (`password`,`customer_type`,`name`,`phone`,`is_admin`) VALUES ("'
         +req.body.password
         +'","'+req.body.customer_type
         +'","'+req.body.name
