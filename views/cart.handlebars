@@ -56,6 +56,9 @@
             <td>
               <input type="hidden" name="product_id" value="{{this.product_id}}">
               <input type="number" name="product_id" min="0", step="1" value="{{this.ordered_quantity}}">
+              <button type="submit" class="btn btn-danger" formaction="/orders/remove_cart_item/{{this.product_id}}">
+                <i class="bi bi-cart-x">&nbsp;</i>Remove
+              </button>
             </td>
             <td>{{this.description}}</td>
             <td>{{this.price}}</td>
@@ -64,5 +67,8 @@
       {{/each}}
     </tbody>
   </table>
-  <button class="btn btn-primary m-2" type="submit"><strong>Place Order</strong></button>
+  <button class="btn btn-info m-2" type="submit" formaction="/orders/update_product_quantities/{{this.product_id}}">
+    <strong><i class="bi bi-cart-check">&nbsp;</i>Update Quantities</strong>
+  </button>
+  <button class="btn btn-primary m-2" type="submit"><strong><i class="bi bi-truck">&nbsp;</i>Place Order</strong></button>
 </form>

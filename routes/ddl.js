@@ -36,6 +36,18 @@ function createTables (req, res, next) {
     PRIMARY KEY (category_id)
   );
 
+  CREATE TABLE IF NOT EXISTS Products_categories_relation (
+    category_id INT NOT NULL,
+    product_id INT NOT NULL,
+    ordered_quantity INT NOT NULL,
+    FOREIGN KEY (category_id)
+        REFERENCES Categories(category_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (product_id)
+        REFERENCES Products(product_id)
+        ON DELETE CASCADE
+  );
+
   CREATE TABLE IF NOT EXISTS Addresses(
     address_id INT NOT NULL AUTO_INCREMENT,
     customer_id INT NOT NULL,
@@ -49,6 +61,17 @@ function createTables (req, res, next) {
         REFERENCES Customers(customer_id)
         ON DELETE CASCADE
   );
+
+  CREATE TABLE IF NOT EXISTS Emails(
+    email_id INT NOT NULL AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    is_primary BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (email_id),
+    FOREIGN KEY (customer_id)
+        REFERENCES Customers(customer_id)
+        ON DELETE CASCADE
+  );
+
   CREATE TABLE IF NOT EXISTS Payment_methods(
     payment_method_id INT NOT NULL AUTO_INCREMENT,
     customer_id INT NOT NULL,
@@ -81,7 +104,7 @@ function createTables (req, res, next) {
       ON DELETE SET NULL
   );
 
-  CREATE TABLE IF NOT EXISTS Orders_Products_Relation (
+  CREATE TABLE IF NOT EXISTS Orders_products_relation (
     order_id INT NOT NULL,
     product_id INT NOT NULL,
     ordered_quantity INT NOT NULL,
