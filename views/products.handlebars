@@ -31,3 +31,20 @@
     {{/each}}
   </tbody>
 </table>
+
+{{#if loggedInCustomer.is_admin}}
+  <form class="row g-3" method="post" action="/products/add">
+    <div class="col-auto">
+      <input type="text" name="product_description" max="255" class="form-control" placeholder="Description">
+    </div>
+    <div class="col-auto">
+      <input type="number" name="in_stock_qty" min="-1" class="form-control" placeholder="Quantity">
+    </div>
+    <div class="col-auto">
+      <input type="text" name="price" min="0" step="0.01" class="form-control" placeholder="Price">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary mb-3">Add Product</button>
+    </div>
+  </form>
+{{/if}}
