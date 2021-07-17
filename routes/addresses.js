@@ -7,7 +7,7 @@ module.exports = router
 router.get('/addresses', function(req, res, next) {
   var context = req.context
   /* Select */
-  mysql.pool.query('SELECT * FROM addresses', function(err, rows, fields){
+  mysql.pool.query('SELECT * FROM Addresses', function(err, rows, fields){
     context.data_rows = rows
     if(err){
       next(err)
@@ -15,7 +15,7 @@ router.get('/addresses', function(req, res, next) {
     }
     console.log(rows)
     /* Create empty row for insertions */
-    mysql.pool.query('SHOW COLUMNS FROM addresses WHERE FIELD != \'address_id\'', function(err, rows, fields){
+    mysql.pool.query('SHOW COLUMNS FROM Addresses WHERE FIELD != \'address_id\'', function(err, rows, fields){
     context.column_list = rows
     if(err){
       next(err)
@@ -29,7 +29,7 @@ router.get('/addresses', function(req, res, next) {
 router.post('/addresses',function (req,res,next) {
   console.log(req.body)
   if (req.body['AddRow']) {
-        let iString = 'INSERT INTO addresses (`customer_id`,`address_1`,`address_2`,`city`,`state`,`zip`) VALUES ("'
+        let iString = 'INSERT INTO Addresses (`customer_id`,`address_1`,`address_2`,`city`,`state`,`zip`) VALUES ("'
         +req.body.customer_id
         +'","'+req.body.address_1
         +'","'+req.body.address_2
@@ -46,7 +46,7 @@ router.post('/addresses',function (req,res,next) {
       }); /* Insert Into */
   }else if (req.body['DeleteRow']){
     console.log(req.body.customer_id)
-      mysql.pool.query('DELETE FROM addresses WHERE address_id =' + req.body.address_id, function(err){
+      mysql.pool.query('DELETE FROM Addresses WHERE address_id =' + req.body.address_id, function(err){
         if(err){
           next(err)
           return
