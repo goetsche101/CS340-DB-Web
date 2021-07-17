@@ -20,21 +20,53 @@ app.set('port', process.argv[2]);
 function getSiteInfo (req, res, next) {
 
   // Context can be accessed from req.context in all route handlers (needed for site navbar)
-  req.context = {
-    cartInfo: {
-      order_id: 3,
-      itemCount: 2
-    },
-    loggedInCustomer: {
-      customer_id: 1,
-      name: 'Test User',
-      customer_type: 'User',
-      phone: '1-888-888-8888',
-      is_admin: true
-    }
-  };
+  req.context = {};
 
-  next();
+  // TODO: get logged in customer id from cookie or handle no customer logged in
+  const customerId = 1;
+
+  const customerQuery = `
+    SELECT customer_id, name, customer_type, is_admin
+    FROM Customers
+    WHERE customer_id = ?;
+  `;
+  const customerQueryValues = [customerId];
+
+  mysql.pool.query(customerQuery, customerQueryValues, function (err, rows) {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    if (!rows || !rows.length) {
+      console.error(`Customer with id ${customerId} not found!`);
+      return;
+    }
+
+    req.context.loggedInCustomer = rows[0];
+
+    const cartQuery = `
+      SELECT Orders.order_id, SUM(Orders_products_relation.ordered_quantity) AS itemCount FROM Orders
+      INNER JOIN Orders_products_relation ON Orders_products_relation.order_id = Orders.order_id
+      WHERE Orders.customer_id = ? AND Orders.is_cart = true;
+    `;
+    const cartQueryValues = [req.context.loggedInCustomer.customer_id];
+
+    mysql.pool.query(cartQuery, cartQueryValues, function (err, rows) {
+      if (err) {
+        next(err);
+        return;
+      }
+
+      if (!rows || !rows.length) {
+        console.error('Customer has no cart!');
+        return;
+      }
+
+      req.context.cartInfo = rows[0];
+      next();
+    });
+  });
 }
 
 app.use(getSiteInfo);
