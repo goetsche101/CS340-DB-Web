@@ -156,6 +156,16 @@ function createTables (req, res, next) {
         VALUES ('Sports Equiptment');
 
 
+        INSERT INTO Products_categories_relation (category_id, product_id)
+        VALUES (1, 2);
+
+        INSERT INTO Products_categories_relation (category_id, product_id)
+        VALUES (2, 2);
+
+        INSERT INTO Products_categories_relation (category_id, product_id)
+        VALUES (3, 3);
+
+
         INSERT INTO Addresses (customer_id, address_1, address_2, city, state, zip)
         VALUES (1, '123 Test Street', 'Unit 3', 'Dallas', 'TX', 76123);
 
