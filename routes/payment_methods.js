@@ -44,7 +44,7 @@ router.post('/payment_methods',function (req,res,next) {
       }); /* Insert Into */
   }else if (req.body['DeleteRow']){
     console.log(req.body.customer_id)
-      mysql.pool.query('DELETE FROM payment_methods WHERE payment_method_id =' + req.body.payment_method_id, function(err){
+      mysql.pool.query('DELETE FROM Payment_methods WHERE payment_method_id =' + req.body.payment_method_id, function(err){
         if(err){
           next(err)
           return
