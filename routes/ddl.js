@@ -39,7 +39,6 @@ function createTables (req, res, next) {
   CREATE TABLE IF NOT EXISTS Products_categories_relation (
     category_id INT NOT NULL,
     product_id INT NOT NULL,
-    ordered_quantity INT NOT NULL,
     FOREIGN KEY (category_id)
         REFERENCES Categories(category_id)
         ON DELETE CASCADE,
@@ -65,6 +64,7 @@ function createTables (req, res, next) {
   CREATE TABLE IF NOT EXISTS Emails(
     email_id INT NOT NULL AUTO_INCREMENT,
     customer_id INT NOT NULL,
+    email_address VARCHAR(255) NOT NULL,
     is_primary BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (email_id),
     FOREIGN KEY (customer_id)
@@ -77,6 +77,7 @@ function createTables (req, res, next) {
     customer_id INT NOT NULL,
     type INT,
     credit_card_number VARCHAR(19),
+    paypal_email VARCHAR(255),
     PRIMARY KEY (payment_method_id),
     FOREIGN KEY (customer_id)
         REFERENCES Customers(customer_id)
@@ -153,6 +154,62 @@ function createTables (req, res, next) {
 
         INSERT INTO Categories (category_name)
         VALUES ('Sports Equiptment');
+
+
+        INSERT INTO Addresses (customer_id, address_1, address_2, city, state, zip)
+        VALUES (1, '123 Test Street', 'Unit 3', 'Dallas', 'TX', 76123);
+
+        INSERT INTO Addresses (customer_id, address_1, address_2, city, state, zip)
+        VALUES (1, '246 Other Street', '', 'New York City', 'NY', 11201);
+
+        INSERT INTO Addresses (customer_id, address_1, address_2, city, state, zip)
+        VALUES (1, '567 Some Rd', '2nd Floor', 'California', 'CA', 93208);
+
+
+        INSERT INTO Emails (customer_id, email_address, is_primary)
+        VALUES (1, 'primary@email.com', true);
+
+        INSERT INTO Emails (customer_id, email_address, is_primary)
+        VALUES (1, 'secondary@email.com', false);
+
+        INSERT INTO Emails (customer_id, email_address, is_primary)
+        VALUES (1, 'other@test.org', false);
+
+
+        INSERT INTO Payment_methods (customer_id, type, credit_card_number, paypal_email)
+        VALUES (1, 2, null, 'primary@email.com');
+
+        INSERT INTO Payment_methods (customer_id, type, credit_card_number, paypal_email)
+        VALUES (1, 1, '1234567891011123', null);
+
+        INSERT INTO Payment_methods (customer_id, type, credit_card_number, paypal_email)
+        VALUES (1, 1, '2468101214161820', null);
+
+
+        INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
+        VALUES (1, 1, 1, false, '2021-07-05 18:19:20', '2021-07-07 08:15:05', 400.00);
+
+        INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
+        VALUES (2, 2, 1, false, '2021-07-10 20:45:30', '2021-07-12 10:35:40', 500.00);
+
+        INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
+        VALUES (1, null, null, true, '2021-07-05 18:19:20', '2021-07-07 08:15:05', null);
+
+
+        INSERT INTO Orders_products_relation (order_id, product_id, ordered_quantity)
+        VALUES (1, 2, 1);
+
+        INSERT INTO Orders_products_relation (order_id, product_id, ordered_quantity)
+        VALUES (1, 3, 1);
+
+        INSERT INTO Orders_products_relation (order_id, product_id, ordered_quantity)
+        VALUES (2, 1, 1);
+
+        INSERT INTO Orders_products_relation (order_id, product_id, ordered_quantity)
+        VALUES (3, 2, 1);
+
+        INSERT INTO Orders_products_relation (order_id, product_id, ordered_quantity)
+        VALUES (3, 3, 2);
       `;
 
       mysql.pool.query(populateTablesString, function(err, rows, fields) {
