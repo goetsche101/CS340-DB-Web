@@ -29,10 +29,10 @@ router.get('/addresses', function(req, res, next) {
 router.post('/addresses',function (req,res,next) {
   console.log(req.body)
   if (req.body['AddRow']) {
-        let iString = 'INSERT INTO Addresses (`customer_id`,`address_1`,`address_2`,`city`,`state`,`zip`) VALUES ("'
+        let iString = 'INSERT INTO Addresses (`customer_id`,`address1`,`address2`,`city`,`state`,`zip`) VALUES ("'
         +req.body.customer_id
-        +'","'+req.body.address_1
-        +'","'+req.body.address_2
+        +'","'+req.body.address1
+        +'","'+req.body.address2
         +'","'+req.body.city
         +'","'+req.body.state
         +'","'+req.body.zip

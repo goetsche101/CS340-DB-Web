@@ -11,8 +11,8 @@ CREATE TABLE `CUSTOMERS` (
   CREATE TABLE `ADDRESS` (
     `address_id` int(11) NOT NULL AUTO_INCREMENT,
     `customer_id` int(11) NOT NULL,
-    `address_1` varchar(255) NOT NULL,
-    `address_2` varchar(255) DEFAULT NULL,
+    `address1` varchar(255) NOT NULL,
+    `address2` varchar(255) DEFAULT NULL,
     `city` varchar(255) NOT NULL,
     `state` char(2) NOT NULL,
     `zip` int(5) NOT NULL,

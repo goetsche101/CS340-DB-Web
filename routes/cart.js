@@ -7,76 +7,103 @@ module.exports = router;
 router.get('/cart', function(req, res, next) {
 
   var context = req.context;
+  const loggedInCustomerId = context.loggedInCustomer.customer_id;
+  const cartId = context.cartInfo.order_id;
 
-  // mysql.pool.query('SELECT * FROM Categories', function(err, rows, fields){
+  mysql.pool.query(
+    'SELECT * FROM Addresses WHERE customer_id = ?',
+    [loggedInCustomerId],
+    function (err, addresses) {
 
-  //   if (err) {
-  //     next(err);
-  //     return;
-  //   }
-
-  //   context.categories = rows;
-  //   res.render('categories', context);
-  // });
-
-  context.addresses = [
-    {
-      address_id: 1,
-      address1: '123 Test Street',
-      address2: 'Unit 3',
-      city: 'Dallas',
-      state: 'TX',
-      zip: 76123
-    },
-    {
-      address_id: 2,
-      address1: '246 Other Street',
-      address2: '',
-      city: 'New York City',
-      state: 'NY',
-      zip: 11201
+    if (err) {
+      next(err);
+      return;
     }
-  ];
 
-  context.payment_methods = [
-    {
-      payment_method_id: 1,
-      type: 'Credit Card',
-      display_info: 'Credit Card ending in 1234'
-    },
-    {
-      payment_method_id: 2,
-      type: 'PayPal',
-      display_info: 'PayPal: test@test.com'
-    }
-  ]
+    context.addresses = addresses;
 
-  context.cart = {
-    order_id: 3,
-    total_cost: '$400.00',
-    address_id: null,
-    selected_address_description: 'None. Please select or create an address below.',
-    payment_method_id: null,
-    selected_payment_method_description: 'None. Please select or create a payment method below.',
-    products: [
-      {
-        product_id: 5,
-        description: '21 Inch LCD Monitor',
-        in_stock_qty: 5,
-        price: '$150.00',
-        ordered_quantity: 1
-      },
-      {
-        product_id: 23,
-        description: 'Acoustic Guitar',
-        in_stock_qty: 300,
-        price: '$250.00',
-        ordered_quantity: 1
+    mysql.pool.query(
+      'SELECT * FROM Payment_methods WHERE customer_id = ?',
+      [loggedInCustomerId],
+      function (err, paymentMethods) {
+
+      if (err) {
+        next(err);
+        return;
       }
-    ]
-  };
 
-  res.render('cart', context);
+      context.payment_methods = paymentMethods.map(function (paymentMethod) {
+
+        const output = { payment_method_id: paymentMethod.payment_method_id };
+
+        if (paymentMethod.type === 1) {
+          const ccNumber = paymentMethod.credit_card_number;
+          output.type = 'Credit Card';
+          output.display_info = `Credit card ending in ${ccNumber.substr(ccNumber.length - 4)}`;
+        }
+        else {
+          output.type = 'PayPal';
+          output.display_info = `PayPal: ${paymentMethod.paypal_email}`;
+        }
+
+        return output;
+      });
+
+
+      const productsQuery = `
+        SELECT Products.*, Orders_products_relation.ordered_quantity FROM Products
+        INNER JOIN Orders_products_relation
+          ON Orders_products_relation.product_id = Products.product_id
+        WHERE Orders_products_relation.order_id = ?;
+      `;
+      const productsValues = [cartId];
+
+      mysql.pool.query(productsQuery, productsValues, function (err, products) {
+        if (err) {
+          next(err);
+          return;
+        }
+
+        var cartTotalCost = 0.0;
+        for (const product of products) {
+          cartTotalCost += parseFloat(product.price);
+          product.price = '$' + product.price;
+        }
+
+        mysql.pool.query('SELECT * from Orders WHERE order_id = ?', [cartId], function (err, cart) {
+          if (err) {
+            next(err);
+            return;
+          }
+
+          cart = cart[0];
+
+          cart.products = products;
+          cart.total_cost = `$${cartTotalCost.toFixed(2)}`;
+
+          if (cart.address_id) {
+            cart.selected_address_description = context.addresses.find((a) => a.address_id === cart.address_id).address1;
+          }
+          else {
+            cart.selected_address_description = 'None. Please select or create an address below.';
+          }
+          
+          if (cart.payment_method_id) {
+            cart.selected_payment_method_description =
+              context.payment_methods.find((a) => a.payment_method_id === cart.payment_method_id).display_info;
+          }
+          else {
+            cart.selected_payment_method_description = 'None. Please select or create a payment method below.';
+          }
+
+
+          context.cart = cart;
+    
+          res.render('cart', context);
+        });
+      });
+    });
+  });
 });
 
 router.post('/cart/add-product', function (req, res, next) {
