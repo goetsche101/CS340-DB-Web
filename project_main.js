@@ -19,11 +19,10 @@ app.set('port', process.argv[2]);
 // This gets run before every route handler
 function getSiteInfo (req, res, next) {
 
-  // Eventually get cart and logged in user info from DB here
-
   // Context can be accessed from req.context in all route handlers (needed for site navbar)
   req.context = {
     cartInfo: {
+      order_id: 3,
       itemCount: 2
     },
     loggedInCustomer: {
@@ -136,80 +135,8 @@ app.get('/orders', function(req, res, next) {
   res.render('orders', context);
 });
 
-app.get('/cart', function(req, res, next) {
-
-  var context = req.context;
-
-  context.selected_address_description = 'None. Please select or create an address below.';
-  context.selected_payment_method_description = 'None. Please select or create a payment method below.';
-
-  context.addresses = [
-    {
-      address_id: 1,
-      address1: '123 Test Street',
-      address2: 'Unit 3',
-      city: 'Dallas',
-      state: 'TX',
-      zip: 76123
-    },
-    {
-      address_id: 2,
-      address1: '246 Other Street',
-      address2: '',
-      city: 'New York City',
-      state: 'NY',
-      zip: 11201
-    }
-  ];
-
-  context.payment_methods = [
-    {
-      payment_method_id: 1,
-      type: 'Credit Card',
-      display_info: 'Credit Card ending in 1234'
-    },
-    {
-      payment_method_id: 2,
-      type: 'PayPal',
-      display_info: 'PayPal: test@test.com'
-    }
-  ]
-
-  context.cart = {
-    order_id: 3,
-    total_cost: '$400.00',
-    address_id: 2,
-    payment_method_id: 2,
-    products: [
-      {
-        product_id: 5,
-        description: '21 Inch LCD Monitor',
-        in_stock_qty: 5,
-        price: '$150.00',
-        ordered_quantity: 1
-      },
-      {
-        product_id: 23,
-        description: 'Acoustic Guitar',
-        in_stock_qty: 300,
-        price: '$250.00',
-        ordered_quantity: 1
-      }
-    ]
-  };
-
-  res.render('cart', context);
-});
-
-app.post('/cart/add', function (req, res, next) {
-
-  res.redirect('/cart');
-});
-
-app.post('/cart/change_quantity', function (req, res, next) {
-
-  res.redirect('/cart');
-});
+const cart = require ('./routes/cart.js');
+app.use(cart);
 
 app.use(function (req, res) {
 
