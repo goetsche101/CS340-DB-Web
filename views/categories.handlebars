@@ -12,7 +12,7 @@
       <form method="post" action="/categories/delete">
         <tr>
           <td>
-            <input type="hidden" name="product_id" value="{{this.category_id}}">
+            <input type="hidden" name="category_id" value="{{this.category_id}}">
             <a class="link-secondary" href="/products?category_id={{this.category_id}}">
               <strong>{{this.category_name}}</strong>
             </a>
@@ -35,7 +35,7 @@
 {{#if loggedInCustomer.is_admin}}
   <form class="row g-3" method="post" action="/categories/add">
     <div class="col-auto">
-      <input type="text" name="category_name" class="form-control" placeholder="Category">
+      <input type="text" name="category_name" class="form-control" placeholder="New Category Name">
     </div>
     <div class="col-auto">
       <button type="submit" class="btn btn-primary mb-3">Add Category</button>

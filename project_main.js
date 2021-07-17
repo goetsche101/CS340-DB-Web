@@ -47,10 +47,10 @@ app.get('/', function(req, res){
   res.render('index', context)
 });
 //Refactor - Using Router
-const ddl = require('./routes/ddl.js')
-app.use(ddl)
-const customers = require ('./routes/customers.js')
-app.use(customers)
+const ddl = require('./routes/ddl.js');
+app.use(ddl);
+const customers = require ('./routes/customers.js');
+app.use(customers);
 
 
 
@@ -84,37 +84,9 @@ app.get('/products', function(req, res, next) {
 });
 
 
-app.get('/categories', function(req, res, next) {
+const categories = require ('./routes/categories.js');
+app.use(categories);
 
-  var context = req.context;
-
-  context.categories = [
-    {
-      category_id: 1,
-      category_name: 'Musical Instruments'
-    },
-    {
-      category_id: 2,
-      category_name: 'Computer Parts'
-    },
-    {
-      category_id: 3,
-      category_name: 'Sports Equiptment'
-    },
-  ];
-
-  res.render('categories', context);
-});
-
-app.post('/categories/add', function (req, res, next) {
-
-  res.redirect('/categories');
-});
-
-app.post('/categories/delete', function (req, res, next) {
-
-  res.redirect('/categories');
-});
 
 app.get('/orders', function(req, res, next) {
 
@@ -195,6 +167,9 @@ app.get('/orders', function(req, res, next) {
 app.get('/cart', function(req, res, next) {
 
   var context = req.context;
+
+  context.selected_address_description = 'None. Please select or create an address below.';
+  context.selected_payment_method_description = 'None. Please select or create a payment method below.';
 
   context.addresses = [
     {
