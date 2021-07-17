@@ -50,11 +50,14 @@ const ddl = require('./routes/ddl.js');
 app.use(ddl);
 const customers = require ('./routes/customers.js');
 app.use(customers);
-
-
+const payment_methods = require('./routes/payment_methods.js');
+app.use(payment_methods);
+const addresses = require('./routes/addresses.js');
+app.use(addresses);
+const emails = require('./routes/emails.js');
+app.use(emails);
 const products = require ('./routes/products.js');
 app.use(products);
-
 const categories = require ('./routes/categories.js');
 app.use(categories);
 
