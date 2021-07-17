@@ -19,6 +19,11 @@ app.set('port', process.argv[2]);
 // This gets run before every route handler
 function getSiteInfo (req, res, next) {
 
+  if (req.originalUrl.toLowerCase().includes('create-tables')) {
+    next();
+    return;
+  }
+
   // Context can be accessed from req.context in all route handlers (needed for site navbar)
   req.context = {};
 

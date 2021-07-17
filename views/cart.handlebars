@@ -69,6 +69,9 @@
       {{/each}}
     </tbody>
   </table>
+
+  <h3>Total Cost: <b>{{cart.total_cost}}</b></h3>
+
   <button class="btn btn-info m-2" type="submit" formaction="/orders/update-product-quantities/{{this.product_id}}">
     <strong><i class="bi bi-cart-check">&nbsp;</i>Update Quantities</strong>
   </button>
