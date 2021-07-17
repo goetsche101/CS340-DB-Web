@@ -53,36 +53,8 @@ const customers = require ('./routes/customers.js');
 app.use(customers);
 
 
-
-app.get('/products', function(req, res, next) {
-
-  // TODO: implement category filter and search
-  var context = req.context;
-
-  context.products = [
-    {
-      product_id: 1,
-      description: '21 Speed Mountain Bike',
-      in_stock_qty: 50,
-      price: '$500.00'
-    },
-    {
-      product_id: 5,
-      description: '21 Inch LCD Monitor',
-      in_stock_qty: 5,
-      price: '$150.00'
-    },
-    {
-      product_id: 23,
-      description: 'Acoustic Guitar',
-      in_stock_qty: 300,
-      price: '$250.00'
-    }
-  ];
-
-  res.render('products', context);
-});
-
+const products = require ('./routes/products.js');
+app.use(products);
 
 const categories = require ('./routes/categories.js');
 app.use(categories);

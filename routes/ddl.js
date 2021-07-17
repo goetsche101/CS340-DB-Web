@@ -147,17 +147,17 @@ function createTables (req, res, next) {
 
 
         INSERT INTO Categories (category_name)
-        VALUES ('Musical Instruments');
+        VALUES ('Sports Equiptment');
 
         INSERT INTO Categories (category_name)
         VALUES ('Computer Parts');
 
         INSERT INTO Categories (category_name)
-        VALUES ('Sports Equiptment');
+        VALUES ('Musical Instruments');
 
 
         INSERT INTO Products_categories_relation (category_id, product_id)
-        VALUES (1, 2);
+        VALUES (1, 1);
 
         INSERT INTO Products_categories_relation (category_id, product_id)
         VALUES (2, 2);
