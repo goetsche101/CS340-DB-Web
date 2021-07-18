@@ -78,10 +78,9 @@ app.use(getSiteInfo);
 
 app.get('/', function(req, res){
   var context = req.context;
-  context.port = process.argv[2]
-  console.log(context.port)
   res.render('index', context)
 });
+
 //Refactor - Using Router
 const ddl = require('./routes/ddl.js');
 app.use(ddl);
