@@ -11,9 +11,9 @@ router.get('/orders', function(req, res, next) {
   const ordersQuery = `
     SELECT Orders.*, Addresses.*, Payment_methods.*,
       group_concat(
+        Orders_products_relation.ordered_quantity, '<SPLIT>',
         Products.description, '<SPLIT>',
-        Products.price, '<SPLIT>',
-        Orders_products_relation.ordered_quantity
+        Products.price
         SEPARATOR '<END>'
       ) AS products_string FROM Orders
     INNER JOIN Addresses ON Addresses.address_id = Orders.address_id
@@ -33,81 +33,81 @@ router.get('/orders', function(req, res, next) {
       return;
     }
 
+    for (const order of orders) {
+      var totalPaid = 0.0;
+      const products = [];
 
-    console.log(orders);
-  });
+      const productStrings = order.products_string.split('<END>');
+      for (const productString of productStrings) {
+        const productFields = productString.split('<SPLIT>');
 
+        // If there were no products in this order somehow all of the items in productFields will be blank
+        if (productFields[0].length) {
+          products.push({
+            ordered_quantity: productFields[0],
+            description: productFields[1],
+            price: '$' + productFields[2]
+          });
 
-  // Eventually get orders for customer where not order is not cart, sorted by created_date
-  // Also get each order's products, addresses, payment methods
-  // Do any formatting on attributes here
-  context.orders = [
-    {
-      order_id: 3,
-      created_date: 'July 8 2021',
-      shipped_date: 'July 10 2021',
-      total_paid: '$400.00',
-      address: {
-        address_id: 2,
-        address1: '246 Other Street',
-        address2: '',
-        city: 'New York City',
-        state: 'NY',
-        zip: 11201
-      },
-      payment_method: {
-        payment_method_id: 2,
-        type: 'PayPal',
-        display_info: 'PayPal: test@test.com'
-      },
-      products: [
-        {
-          product_id: 5,
-          description: '21 Inch LCD Monitor',
-          in_stock_qty: 5,
-          price: '$150.00',
-          ordered_quantity: 1
-        },
-        {
-          product_id: 23,
-          description: 'Acoustic Guitar',
-          in_stock_qty: 300,
-          price: '$250.00',
-          ordered_quantity: 1
+          totalPaid += parseFloat(productFields[2]);
         }
-      ]
-    },
-    {
-      order_id: 1,
-      created_date: 'July 5 2021',
-      shipped_date: 'Awaiting Shipment',
-      total_paid: '$500.00',
-      address: {
-        address_id: 1,
-        address1: '123 Test Street',
-        address2: 'Unit 3',
-        city: 'Dallas',
-        state: 'TX',
-        zip: 76123
-      },
-      payment_method: {
-        payment_method_id: 1,
-        type: 'Credit Card',
-        display_info: 'Credit Card ending in 1234'
-      },
-      products: [
-        {
-          product_id: 1,
-          description: '21 Speed Mountain Bike',
-          in_stock_qty: 50,
-          price: '$500.00',
-          ordered_quantity: 1
+      }
+
+      order.products = products;
+      order.total_paid = '$' + totalPaid.toFixed(2);
+
+      if (order.address_id) {
+        order.address = {
+          address1: order.address1,
+          address2: order.address2,
+          city: order.city,
+          state: order.state,
+          zip: order.zip
+        };
+      }
+      else {
+        order.address = {
+          address1: '',
+          address2: '',
+          city: '',
+          state: '',
+          zip: ''
+        };
+      }
+
+      if (order.payment_method_id) {
+
+        var type = '';
+        var display_info = '';
+
+        if (order.type === 1) {
+          const ccNumber = order.credit_card_number;
+          type = 'Credit Card';
+          display_info = `Credit card ending in ${ccNumber.substr(ccNumber.length - 4)}`;
         }
-      ]
+        else {
+          type = 'PayPal';
+          display_info = `PayPal: ${order.paypal_email}`;
+        }
+
+
+        order.payment_method = {
+          type: type,
+          display_info: display_info
+        };
+      }
+      else {
+        order.payment_method = {
+          type: '',
+          display_info: ''
+        };
+      }
     }
-  ];
 
-  res.render('orders', context);
+    context.orders = orders;
+
+    res.render('orders', context);
+  });
 });
 
 router.post('/categories/delete', function (req, res, next) {
