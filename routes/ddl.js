@@ -50,8 +50,8 @@ function createTables (req, res, next) {
   CREATE TABLE IF NOT EXISTS Addresses(
     address_id INT NOT NULL AUTO_INCREMENT,
     customer_id INT NOT NULL,
-    address_1 VARCHAR(255) NOT NULL,
-    address_2 VARCHAR(255) NOT NULL,
+    address1 VARCHAR(255) NOT NULL,
+    address2 VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
     state CHAR(2),
     zip INT(5) NOT NULL,
@@ -147,17 +147,17 @@ function createTables (req, res, next) {
 
 
         INSERT INTO Categories (category_name)
-        VALUES ('Musical Instruments');
+        VALUES ('Sports Equiptment');
 
         INSERT INTO Categories (category_name)
         VALUES ('Computer Parts');
 
         INSERT INTO Categories (category_name)
-        VALUES ('Sports Equiptment');
+        VALUES ('Musical Instruments');
 
 
         INSERT INTO Products_categories_relation (category_id, product_id)
-        VALUES (1, 2);
+        VALUES (1, 1);
 
         INSERT INTO Products_categories_relation (category_id, product_id)
         VALUES (2, 2);
@@ -166,13 +166,13 @@ function createTables (req, res, next) {
         VALUES (3, 3);
 
 
-        INSERT INTO Addresses (customer_id, address_1, address_2, city, state, zip)
+        INSERT INTO Addresses (customer_id, address1, address2, city, state, zip)
         VALUES (1, '123 Test Street', 'Unit 3', 'Dallas', 'TX', 76123);
 
-        INSERT INTO Addresses (customer_id, address_1, address_2, city, state, zip)
+        INSERT INTO Addresses (customer_id, address1, address2, city, state, zip)
         VALUES (1, '246 Other Street', '', 'New York City', 'NY', 11201);
 
-        INSERT INTO Addresses (customer_id, address_1, address_2, city, state, zip)
+        INSERT INTO Addresses (customer_id, address1, address2, city, state, zip)
         VALUES (1, '567 Some Rd', '2nd Floor', 'California', 'CA', 93208);
 
 

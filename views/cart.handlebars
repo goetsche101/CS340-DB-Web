@@ -2,6 +2,7 @@
 <br>
 <form method="post" action="/order/create">
   <h3>Ship To Address:</h3>
+  <h5>Selected Address: {{cart.selected_address_description}}</h5>
   <div class="list-group">
     {{#each addresses}}
       <div class="list-group-item">
@@ -23,6 +24,7 @@
   <br>
   
   <h3>Payment Method:</h3>
+  <h5>Selected Payment Method: {{cart.selected_payment_method_description}}</h5>
   <div class="list-group">
     {{#each payment_methods}}
       <div class="list-group-item">
@@ -33,7 +35,7 @@
       </div>
     {{/each}}
   </div>
-  <a class="btn btn-secondary m-2" href="/payment-methods">
+  <a class="btn btn-secondary m-2" href="/payment_methods">
     <strong>
       <i class="bi bi-plus-circle">&nbsp;</i>Add Payment Method
     </strong>
@@ -67,7 +69,10 @@
       {{/each}}
     </tbody>
   </table>
-  <button class="btn btn-info m-2" type="submit" formaction="/orders/update_product_quantities/{{this.product_id}}">
+
+  <h3>Total Cost: <b>{{cart.total_cost}}</b></h3>
+
+  <button class="btn btn-info m-2" type="submit" formaction="/orders/update-product-quantities/{{this.product_id}}">
     <strong><i class="bi bi-cart-check">&nbsp;</i>Update Quantities</strong>
   </button>
   <button class="btn btn-primary m-2" type="submit"><strong><i class="bi bi-truck">&nbsp;</i>Place Order</strong></button>

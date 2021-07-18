@@ -11,7 +11,7 @@
   </thead>
   <tbody>
     {{#each products}}
-      <form method="post" action="/cart/add">
+      <form method="post" action="/cart/add-product">
         <tr>
           <td>
             <input type="hidden" name="product_id" value="{{this.product_id}}">
@@ -35,7 +35,7 @@
 {{#if loggedInCustomer.is_admin}}
   <form class="row g-3" method="post" action="/products/add">
     <div class="col-auto">
-      <input type="text" name="product_description" max="255" class="form-control" placeholder="Description">
+      <input type="text" name="description" max="255" class="form-control" placeholder="Description">
     </div>
     <div class="col-auto">
       <input type="number" name="in_stock_qty" min="-1" class="form-control" placeholder="Quantity">

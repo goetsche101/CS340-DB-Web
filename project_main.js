@@ -19,23 +19,59 @@ app.set('port', process.argv[2]);
 // This gets run before every route handler
 function getSiteInfo (req, res, next) {
 
-  // Eventually get cart and logged in user info from DB here
+  if (req.originalUrl.toLowerCase().includes('create-tables')) {
+    next();
+    return;
+  }
 
   // Context can be accessed from req.context in all route handlers (needed for site navbar)
-  req.context = {
-    cartInfo: {
-      itemCount: 2
-    },
-    loggedInCustomer: {
-      customer_id: 1,
-      name: 'Test User',
-      customer_type: 'User',
-      phone: '1-888-888-8888',
-      is_admin: true
-    }
-  };
+  req.context = {};
 
-  next();
+  // TODO: get logged in customer id from cookie or handle no customer logged in
+  const customerId = 1;
+
+  const customerQuery = `
+    SELECT customer_id, name, customer_type, is_admin
+    FROM Customers
+    WHERE customer_id = ?;
+  `;
+  const customerQueryValues = [customerId];
+
+  mysql.pool.query(customerQuery, customerQueryValues, function (err, rows) {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    if (!rows || !rows.length) {
+      console.error(`Customer with id ${customerId} not found!`);
+      return;
+    }
+
+    req.context.loggedInCustomer = rows[0];
+
+    const cartQuery = `
+      SELECT Orders.order_id, SUM(Orders_products_relation.ordered_quantity) AS itemCount FROM Orders
+      INNER JOIN Orders_products_relation ON Orders_products_relation.order_id = Orders.order_id
+      WHERE Orders.customer_id = ? AND Orders.is_cart = true;
+    `;
+    const cartQueryValues = [req.context.loggedInCustomer.customer_id];
+
+    mysql.pool.query(cartQuery, cartQueryValues, function (err, rows) {
+      if (err) {
+        next(err);
+        return;
+      }
+
+      if (!rows || !rows.length) {
+        console.error('Customer has no cart!');
+        return;
+      }
+
+      req.context.cartInfo = rows[0];
+      next();
+    });
+  });
 }
 
 app.use(getSiteInfo);
@@ -47,79 +83,21 @@ app.get('/', function(req, res){
   res.render('index', context)
 });
 //Refactor - Using Router
-const ddl = require('./routes/ddl.js')
-app.use(ddl)
-const customers = require ('./routes/customers.js')
-app.use(customers)
-const payment_methods = require('./routes/payment_methods.js')
-app.use(payment_methods)
-const addresses = require('./routes/addresses.js')
-app.use(addresses)
-const emails = require('./routes/emails.js')
-app.use(emails)
+const ddl = require('./routes/ddl.js');
+app.use(ddl);
+const customers = require ('./routes/customers.js');
+app.use(customers);
+const payment_methods = require('./routes/payment_methods.js');
+app.use(payment_methods);
+const addresses = require('./routes/addresses.js');
+app.use(addresses);
+const emails = require('./routes/emails.js');
+app.use(emails);
+const products = require ('./routes/products.js');
+app.use(products);
+const categories = require ('./routes/categories.js');
+app.use(categories);
 
-
-app.get('/products', function(req, res, next) {
-
-  // TODO: implement category filter and search
-  var context = req.context;
-
-  context.products = [
-    {
-      product_id: 1,
-      description: '21 Speed Mountain Bike',
-      in_stock_qty: 50,
-      price: '$500.00'
-    },
-    {
-      product_id: 5,
-      description: '21 Inch LCD Monitor',
-      in_stock_qty: 5,
-      price: '$150.00'
-    },
-    {
-      product_id: 23,
-      description: 'Acoustic Guitar',
-      in_stock_qty: 300,
-      price: '$250.00'
-    }
-  ];
-
-  res.render('products', context);
-});
-
-
-app.get('/categories', function(req, res, next) {
-
-  var context = req.context;
-
-  context.categories = [
-    {
-      category_id: 1,
-      category_name: 'Musical Instruments'
-    },
-    {
-      category_id: 2,
-      category_name: 'Computer Parts'
-    },
-    {
-      category_id: 3,
-      category_name: 'Sports Equiptment'
-    },
-  ];
-
-  res.render('categories', context);
-});
-
-app.post('/categories/add', function (req, res, next) {
-
-  res.redirect('/categories');
-});
-
-app.post('/categories/delete', function (req, res, next) {
-
-  res.redirect('/categories');
-});
 
 app.get('/orders', function(req, res, next) {
 
@@ -197,77 +175,8 @@ app.get('/orders', function(req, res, next) {
   res.render('orders', context);
 });
 
-app.get('/cart', function(req, res, next) {
-
-  var context = req.context;
-
-  context.addresses = [
-    {
-      address_id: 1,
-      address1: '123 Test Street',
-      address2: 'Unit 3',
-      city: 'Dallas',
-      state: 'TX',
-      zip: 76123
-    },
-    {
-      address_id: 2,
-      address1: '246 Other Street',
-      address2: '',
-      city: 'New York City',
-      state: 'NY',
-      zip: 11201
-    }
-  ];
-
-  context.payment_methods = [
-    {
-      payment_method_id: 1,
-      type: 'Credit Card',
-      display_info: 'Credit Card ending in 1234'
-    },
-    {
-      payment_method_id: 2,
-      type: 'PayPal',
-      display_info: 'PayPal: test@test.com'
-    }
-  ]
-
-  context.cart = {
-    order_id: 3,
-    total_cost: '$400.00',
-    address_id: 2,
-    payment_method_id: 2,
-    products: [
-      {
-        product_id: 5,
-        description: '21 Inch LCD Monitor',
-        in_stock_qty: 5,
-        price: '$150.00',
-        ordered_quantity: 1
-      },
-      {
-        product_id: 23,
-        description: 'Acoustic Guitar',
-        in_stock_qty: 300,
-        price: '$250.00',
-        ordered_quantity: 1
-      }
-    ]
-  };
-
-  res.render('cart', context);
-});
-
-app.post('/cart/add', function (req, res, next) {
-
-  res.redirect('/cart');
-});
-
-app.post('/cart/change_quantity', function (req, res, next) {
-
-  res.redirect('/cart');
-});
+const cart = require ('./routes/cart.js');
+app.use(cart);
 
 app.use(function (req, res) {
 
