@@ -44,6 +44,13 @@ router.post('/customers',function (req,res,next) {
       }); /* Insert Into */
   }else if (req.body['DeleteRow']){
     console.log(req.body.customer_id)
+
+    // Don't let the admin user be deleted
+    if (req.body.customer_id === 1 || req.body.customer_id === '1') {
+      res.redirect('/customers');
+      return;
+    }
+
       mysql.pool.query('DELETE FROM Customers WHERE customer_id =' + req.body.customer_id, function(err){
         if(err){
           next(err)
