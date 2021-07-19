@@ -53,7 +53,7 @@ function getSiteInfo (req, res, next) {
     const cartQuery = `
       SELECT Orders.order_id, SUM(Orders_products_relation.ordered_quantity) AS itemCount FROM Orders
       INNER JOIN Orders_products_relation ON Orders_products_relation.order_id = Orders.order_id
-      WHERE Orders.customer_id = ? AND Orders.is_cart = true;
+      WHERE Orders.customer_id = ? AND Orders.is_cart = true GROUP BY Orders.order_id;
     `;
     const cartQueryValues = [req.context.loggedInCustomer.customer_id];
 
