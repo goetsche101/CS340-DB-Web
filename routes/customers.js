@@ -34,11 +34,26 @@ router.post('/customers',function (req,res,next) {
         +'","'+req.body.phone
         +'","'+req.body.is_admin
         + '")';
-      mysql.pool.query(iString,function (err) {
+      mysql.pool.query(iString,function (err, result) {
         if(err){
           next(err)
           return
         }
+
+        // Create a cart for the new customer
+        const createCartQuery = `
+          INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
+          VALUES (?, NULL, NULL, true, ?, NULL, NULL);
+        `;
+        const createCartValues = [result.insertId, new Date()];
+
+        mysql.pool.query(createCartQuery, createCartValues, function (err, result) {
+          if(err){
+            next(err)
+            return
+          }
+
+        });
       }); /* Insert Into */
   }else if (req.body['DeleteRow']){
     // Don't let the admin user be deleted

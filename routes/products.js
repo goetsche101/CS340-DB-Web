@@ -49,6 +49,14 @@ router.post('/products/add', function (req, res, next) {
     return;
   }
 
+  // Don't allow certain strings used to concatinate data in certain requests
+  for (const divider of ['<END>', '<SPLIT>']) {
+    if (req.body.description.includes(divider)) {
+      res.redirect('/products');
+      return;
+    }
+  }
+
   const query = 'INSERT INTO Products (description, in_stock_qty, price) VALUES (?, ?, ?)';
   const values = [req.body.description, req.body.in_stock_qty, req.body.price];
 

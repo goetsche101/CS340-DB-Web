@@ -212,7 +212,7 @@ function createTables (req, res, next) {
         VALUES (1, 1, 1, false, '2021-07-05 18:19:20', '2021-07-07 08:15:05', 400.00);
 
         INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
-        VALUES (2, 2, 1, false, '2021-07-10 20:45:30', '2021-07-12 10:35:40', 500.00);
+        VALUES (1, 2, 1, false, '2021-07-10 20:45:30', '2021-07-12 10:35:40', 500.00);
 
         INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
         VALUES (1, null, null, true, '2021-07-05 18:19:20', '2021-07-07 08:15:05', null);

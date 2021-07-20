@@ -43,7 +43,8 @@
     </div>
 
       <form method="post" action="/orders/delete">
-          <button type="submit" class="btn btn-danger mb-3"><i class="bi bi-x-circle">&nbsp;</i>Remove From History</button>
+        <input type="hidden" name="order_id" value="{{this.order_id}}">
+        <button type="submit" class="btn btn-danger mb-3"><i class="bi bi-x-circle">&nbsp;</i>Remove From History</button>
       </form>
   {{/each}}
 </div>
