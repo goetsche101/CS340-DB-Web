@@ -14,21 +14,22 @@
   </thead>
   <tbody>
 
-    <tr>
       {{#each data_rows}}
-        <td>{{this.customer_id}}</td>
-        <td>{{this.password}}</td>
-        <td>{{this.customer_type}}</td>
-        <td>{{this.name}}</td>
-        <td>{{this.phone}}</td>
-        <td>{{this.is_admin}}</td>
-        <td>
+        <tr>
           <form method="post">
-            <input type='hidden' name='customer_id' value = {{this.customer_id}}>
-            <input type = 'submit' name = 'DeleteRow' value='DeleteRow'>
+            <td>{{this.customer_id}}</td>
+            <td><input type="text" name='password' value={{this.password}}></td>
+            <td><input type="text" name='customer_type' value={{this.customer_type}}></td>
+            <td><input type="text" name='name' value={{this.name}}></td>
+            <td><input type="text" name='phone' value={{this.phone}}></td>
+            <td><input type="text" name='is_admin' value={{this.is_admin}}></td>
+            <td>
+                <input type='hidden' name='customer_id' value = {{this.customer_id}}>
+                <input type='submit' name='EditRow' value ='Update'>
+                <input type = 'submit' name = 'DeleteRow' value='Delete'>
+            </td>
           </form>
-        </td>
-    </tr>
+        </tr>
       {{/each}}
     <form method="post">
       <tr>
