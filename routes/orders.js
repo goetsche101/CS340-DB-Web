@@ -110,10 +110,10 @@ router.get('/orders', function(req, res, next) {
   });
 });
 
-router.post('/categories/delete', function (req, res, next) {
+router.post('/orders/delete', function (req, res, next) {
 
-  const query = 'DELETE FROM Categories WHERE category_id = ?';
-  const values = [req.body.category_id];
+  const query = 'DELETE FROM Orders WHERE is_cart = false AND order_id = ?';
+  const values = [req.body.order_id];
 
   mysql.pool.query(query, values, function (err) {
     if (err) {
@@ -121,7 +121,7 @@ router.post('/categories/delete', function (req, res, next) {
       return;
     }
 
-    res.redirect('/categories');
+    res.redirect('/orders');
   });
 });
 
