@@ -123,3 +123,104 @@ DELETE FROM Customers WHERE customer_id = :customer_id;
 
 UPDATE Customers SET password = :password, name = :name, phone = :phone, is_admin = :is_admin
 WHERE customer_id = :customer_id;
+
+
+
+
+-- Query to select a customer's emails
+-- Colons before words indicate variables that will be provided by the backend
+
+SELECT * FROM Emails WHERE customer_id = :customer_id;
+
+
+-- Query to insert a new email
+-- Colons before words indicate variables that will be provided by the backend
+
+INSERT INTO Emails ('customer_id' ,'email_address', 'is_primary')
+VALUES (:customer_id, :email_address, :is_primary);
+
+
+-- Query to delete an email
+-- Colons before words indicate variables that will be provided by the backend
+
+DELETE FROM Emails WHERE email_id = :email_id;
+
+
+
+-- Query to get the logged in user's cart, its products, and the user's addresses and emails.
+-- The products are retrieved as a single string with each field seperated by '<SPLIT>'
+-- and each product seperated by '<END>'.
+-- Colons before words indicate variables that will be provided by the backend
+
+SELECT Orders.*, Addresses.*, Payment_methods.*,
+  group_concat(
+    Orders_products_relation.ordered_quantity, '<SPLIT>',
+    Products.description, '<SPLIT>',
+    Products.price
+    SEPARATOR '<END>'
+  ) AS products_string FROM Orders
+INNER JOIN Addresses ON Addresses.address_id = Orders.address_id
+INNER JOIN Payment_methods ON Payment_methods.payment_method_id = Orders.payment_method_id
+INNER JOIN Orders_products_relation ON Orders_products_relation.order_id = Orders.order_id
+INNER JOIN Products ON Orders_products_relation.product_id = Products.product_id
+WHERE Orders.is_cart = false AND Orders.customer_id = :customer_id
+GROUP BY Orders.order_id
+ORDER BY Orders.created_date DESC;
+
+
+-- Query to delete an order
+-- Colons before words indicate variables that will be provided by the backend
+
+DELETE FROM Orders WHERE is_cart = false AND order_id = ?
+
+
+
+
+-- Query to get a customer's payment methods
+-- Colons before words indicate variables that will be provided by the backend
+
+SELECT * FROM Payment_methods WHERE customer_id = :customer_id;
+
+
+-- Query to insert a new payment method
+-- Colons before words indicate variables that will be provided by the backend
+
+INSERT INTO Payment_methods ('customer_id', 'type', 'credit_card_number', 'paypal_email')
+VALUES (:customer_id, :type, :credit_card_number, :paypal_email);
+
+
+-- Query to delete a payment method.
+-- Colons before words indicate variables that will be provided by the backend
+
+DELETE FROM Payment_methods WHERE payment_method_id = :payment_method_id;
+
+
+
+
+-- Query to select all products
+-- Colons before words indicate variables that will be provided by the backend
+
+
+SELECT * FROM Products;
+
+
+-- Query to search for a specific product
+-- Colons before words indicate variables that will be provided by the backend
+
+SELECT * FROM Products WHERE lower(description) LIKE '%:search_term%';
+
+
+-- Query to search for products in a specific category
+-- Colons before words indicate variables that will be provided by the backend
+
+SELECT * FROM Products
+LEFT JOIN Products_categories_relation
+ON Products_categories_relation.product_id = Products.product_id
+WHERE Products_categories_relation.category_id = :category_id;
+
+
+-- Query to insert a new product
+-- Colons before words indicate variables that will be provided by the backend
+
+INSERT INTO Products (description, in_stock_qty, price)
+VALUES (:description, :in_stock_qty, :price);
