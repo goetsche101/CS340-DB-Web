@@ -66,7 +66,7 @@ router.get('/cart', function(req, res, next) {
 
         var cartTotalCost = 0.0;
         for (const product of products) {
-          cartTotalCost += parseFloat(product.price);
+          cartTotalCost += parseFloat(product.price) * product.ordered_quantity;
           product.price = '$' + product.price;
         }
 
@@ -158,6 +158,40 @@ router.post('/cart/add-product', function (req, res, next) {
 
 router.post('/cart/update-product-quantities', function (req, res, next) {
 
-  res.redirect('/cart');
+  var context = req.context;
+  const orderId = req.body.order_id;
+  const productIds = req.body.product_ids;
+  const quantities = req.body.ordered_quantities;
+  let updateQuery = '';
+
+  // The request will send product_ids and ordered_quantities as two arrays of the same length.
+  // Each product id in product_ids corresponds to a quantity at the same index in ordered_quantities.
+  // If a quantity is set to 0 that product will be removed.
+  for (let i = 0; i < productIds.length; i++) {
+    if (quantities[i] === '0') {
+      updateQuery += `
+      DELETE FROM Orders_products_relation
+      WHERE order_id = ${orderId} AND product_id = ${productIds[i]};
+
+    `;
+    }
+
+    updateQuery += `
+      UPDATE Orders_products_relation
+      SET ordered_quantity = ${quantities[i]}
+      WHERE order_id = ${orderId} AND product_id = ${productIds[i]};
+
+    `;
+  }
+
+  mysql.pool.query(updateQuery, function (err, rows) {
+
+    if (err) {
+      next(err);
+      return;
+    }
+
+    res.redirect('/cart');
+  });
 });
 
