@@ -71,7 +71,7 @@
             <td>
               <input type="hidden" name="product_ids" value="{{this.product_id}}">
               <input type="number" name="ordered_quantities" min="0", step="1" value="{{this.ordered_quantity}}">
-              <button type="submit" class="btn btn-danger" formaction="/orders/remove_cart_item/{{this.product_id}}">
+              <button type="submit" class="btn btn-danger" formaction="/cart/remove_product/{{this.product_id}}">
                 <i class="bi bi-cart-x">&nbsp;</i>Remove
               </button>
             </td>

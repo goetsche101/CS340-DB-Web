@@ -175,14 +175,37 @@ router.post('/cart/update-product-quantities', function (req, res, next) {
 
     `;
     }
+    else {
+      updateQuery += `
+        UPDATE Orders_products_relation
+        SET ordered_quantity = ${quantities[i]}
+        WHERE order_id = ${orderId} AND product_id = ${productIds[i]};
 
-    updateQuery += `
-      UPDATE Orders_products_relation
-      SET ordered_quantity = ${quantities[i]}
-      WHERE order_id = ${orderId} AND product_id = ${productIds[i]};
-
-    `;
+      `;
+    }
   }
+
+  mysql.pool.query(updateQuery, function (err, rows) {
+
+    if (err) {
+      next(err);
+      return;
+    }
+
+    res.redirect('/cart');
+  });
+});
+
+
+router.post('/cart/remove_product/:product_id', function (req, res, next) {
+
+  var context = req.context;
+  const orderId = req.body.order_id;
+
+  const updateQuery = `
+    DELETE FROM Orders_products_relation
+    WHERE order_id = ${orderId} AND product_id = ${req.params.product_id};
+  `;
 
   mysql.pool.query(updateQuery, function (err, rows) {
 

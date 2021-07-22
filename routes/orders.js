@@ -110,6 +110,41 @@ router.get('/orders', function(req, res, next) {
   });
 });
 
+
+router.post('/orders/create', function (req, res, next) {
+
+  var context = req.context;
+
+  if (!req.body.address_id || !req.body.payment_method_id || !context.cartInfo.itemCount) {
+    res.redirect('/orders');
+  }
+
+
+  const query = `
+    UPDATE Orders
+    SET is_cart = false, address_id = ?, payment_method_id = ?, created_date = ?, total_paid = ?
+    WHERE order_id = ? AND customer_id = ?
+  `;
+  const values = [
+    req.body.address_id,
+    req.body.payment_method_id,
+    new Date(),
+    ---,
+    context.cartInfo.order_id,
+    context.loggedInCustomer.customer_id
+  ];
+
+  mysql.pool.query(query, values, function (err) {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    res.redirect('/orders');
+  });
+});
+
+
 router.post('/orders/delete', function (req, res, next) {
 
   const query = 'DELETE FROM Orders WHERE is_cart = false AND order_id = ?';
