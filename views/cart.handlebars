@@ -1,13 +1,20 @@
 <h1>Shopping Cart:</h1>
 <br>
-<form method="post" action="/order/create">
+<form method="post" action="/orders/create">
+  <input type="hidden" name="order_id" value="{{cart.order_id}}">
   <h3>Ship To Address:</h3>
   <h5>Selected Address: {{cart.selected_address_description}}</h5>
   <div class="list-group">
     {{#each addresses}}
       <div class="list-group-item">
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="address_id" id="addressRadio{{this.address_id}}">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="address_id"
+            id="addressRadio{{this.address_id}}"
+            value={{this.address_id}}
+          >
           <label class="form-check-label" for="addressRadio{{this.address_id}}">
           {{this.address1}} {{this.address2}}, {{this.city}}, {{this.state}} {{this.zip}}
           </label>
@@ -29,7 +36,13 @@
     {{#each payment_methods}}
       <div class="list-group-item">
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="payment_method_id" id="paymentRadio{{this.payment_method_id}}">
+          <input
+          class="form-check-input"
+          type="radio"
+          name="payment_method_id"
+          id="paymentRadio{{this.payment_method_id}}"
+          value={{this.payment_method_id}}
+        >
           <label class="form-check-label" for="paymentRadio{{this.payment_method_id}}">{{this.display_info}}</label>
         </div>
       </div>
@@ -56,9 +69,9 @@
       {{#each cart.products}}
           <tr>
             <td>
-              <input type="hidden" name="product_id" value="{{this.product_id}}">
-              <input type="number" name="product_id" min="0", step="1" value="{{this.ordered_quantity}}">
-              <button type="submit" class="btn btn-danger" formaction="/orders/remove_cart_item/{{this.product_id}}">
+              <input type="hidden" name="product_ids" value="{{this.product_id}}">
+              <input type="number" name="ordered_quantities" min="0", step="1" value="{{this.ordered_quantity}}">
+              <button type="submit" class="btn btn-danger" formaction="/cart/remove_product/{{this.product_id}}">
                 <i class="bi bi-cart-x">&nbsp;</i>Remove
               </button>
             </td>
@@ -72,8 +85,16 @@
 
   <h3>Total Cost: <b>{{cart.total_cost}}</b></h3>
 
-  <button class="btn btn-info m-2" type="submit" formaction="/orders/update-product-quantities/{{this.product_id}}">
-    <strong><i class="bi bi-cart-check">&nbsp;</i>Update Quantities</strong>
-  </button>
-  <button class="btn btn-primary m-2" type="submit"><strong><i class="bi bi-truck">&nbsp;</i>Place Order</strong></button>
+  {{#if cartInfo.hasItems}}
+    <button class="btn btn-info m-2" type="submit" formaction="/cart/update-product-quantities/">
+      <strong>
+        <i class="bi bi-cart-check">&nbsp;</i>Update Quantities
+      </strong>
+    </button>
+    <button class="btn btn-primary m-2" type="submit">
+      <strong>
+        <i class="bi bi-truck">&nbsp;</i>Place Order
+      </strong>
+    </button>
+  {{/if}}
 </form>

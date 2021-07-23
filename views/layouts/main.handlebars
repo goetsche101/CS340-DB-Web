@@ -49,6 +49,11 @@
 				</form>
 			</div>
 		</nav>
+  		{{#if this.errorMessage}}
+			<div class="alert alert-danger" role="alert">
+				{{this.errorMessage}}
+			</div>
+		{{/if}}
 		{{{body}}}
 	</body>
 </html>

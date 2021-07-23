@@ -34,7 +34,6 @@ router.get('/orders', function(req, res, next) {
     }
 
     for (const order of orders) {
-      var totalPaid = 0.0;
       const products = [];
 
       const productStrings = order.products_string.split('<END>');
@@ -46,15 +45,16 @@ router.get('/orders', function(req, res, next) {
           products.push({
             ordered_quantity: productFields[0],
             description: productFields[1],
-            price: '$' + productFields[2]
+            price: '$' + (parseFloat(productFields[2]).toFixed(2))
           });
-
-          totalPaid += parseFloat(productFields[2]);
         }
       }
 
       order.products = products;
-      order.total_paid = '$' + totalPaid.toFixed(2);
+      order.total_paid = '$' + (parseFloat(order.total_paid).toFixed(2));
+      if (!order.shipped_date) {
+        order.shipped_date = 'Awaiting shipment';
+      }
 
       if (order.address_id) {
         order.address = {
@@ -109,6 +109,73 @@ router.get('/orders', function(req, res, next) {
     res.render('orders', context);
   });
 });
+
+
+router.post('/orders/create', function (req, res, next) {
+
+  var context = req.context;
+
+  if (!req.body.address_id || !req.body.payment_method_id || !context.cartInfo.itemCount) {
+    res.redirect('/cart');
+    return;
+  }
+
+  const cartProductsQuery = `
+    SELECT Products.*, Orders_products_relation.ordered_quantity FROM Products
+    INNER JOIN Orders_products_relation
+      ON Orders_products_relation.product_id = Products.product_id
+    WHERE Orders_products_relation.order_id = ?;
+  `;
+  const cartProductsValues = [context.cartInfo.order_id];
+
+  mysql.pool.query(cartProductsQuery, cartProductsValues, function (err, products) {
+    if (err) {
+      next(err);
+      return;
+    }
+
+    if (!products.length) {
+      res.redirect('/cart');
+      return;
+    }
+
+    var cartTotalCost = 0.0;
+    for (const product of products) {
+      cartTotalCost += parseFloat(product.price) * product.ordered_quantity;
+    }
+
+    // Convert the cart into an order and create a new cart
+    const orderQuery = `
+      UPDATE Orders
+      SET is_cart = false, address_id = ?, payment_method_id = ?, created_date = ?, total_paid = ?
+      WHERE order_id = ? AND customer_id = ?;
+
+      INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
+      VALUES (?, NULL, NULL, true, ?, NULL, NULL);
+    `;
+    const orderValues = [
+      req.body.address_id,
+      req.body.payment_method_id,
+      new Date(),
+      cartTotalCost,
+      context.cartInfo.order_id,
+      context.loggedInCustomer.customer_id,
+      context.loggedInCustomer.customer_id,
+      new Date()
+    ];
+
+    mysql.pool.query(orderQuery, orderValues, function (err) {
+      if (err) {
+        next(err);
+        return;
+      }
+
+      res.redirect('/orders');
+    });
+    
+  });
+});
+
 
 router.post('/orders/delete', function (req, res, next) {
 
