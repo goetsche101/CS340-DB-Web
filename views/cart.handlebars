@@ -1,6 +1,6 @@
 <h1>Shopping Cart:</h1>
 <br>
-<form method="post" action="/order/create">
+<form method="post" action="/orders/create">
   <input type="hidden" name="order_id" value="{{cart.order_id}}">
   <h3>Ship To Address:</h3>
   <h5>Selected Address: {{cart.selected_address_description}}</h5>
@@ -85,8 +85,16 @@
 
   <h3>Total Cost: <b>{{cart.total_cost}}</b></h3>
 
-  <button class="btn btn-info m-2" type="submit" formaction="/cart/update-product-quantities/">
-    <strong><i class="bi bi-cart-check">&nbsp;</i>Update Quantities</strong>
-  </button>
-  <button class="btn btn-primary m-2" type="submit"><strong><i class="bi bi-truck">&nbsp;</i>Place Order</strong></button>
+  {{#if cartInfo.hasItems}}
+    <button class="btn btn-info m-2" type="submit" formaction="/cart/update-product-quantities/">
+      <strong>
+        <i class="bi bi-cart-check">&nbsp;</i>Update Quantities
+      </strong>
+    </button>
+    <button class="btn btn-primary m-2" type="submit">
+      <strong>
+        <i class="bi bi-truck">&nbsp;</i>Place Order
+      </strong>
+    </button>
+  {{/if}}
 </form>

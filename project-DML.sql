@@ -72,6 +72,22 @@ INSERT INTO Orders_products_relation (order_id, product_id, ordered_quantity)
 VALUES (:order_id, :product_id, :ordered_quantity);
 
 
+-- Query to convert a cart into an order
+-- Colons before words indicate variables that will be provided by the backend
+
+UPDATE Orders
+SET is_cart = false, address_id = :address_id, payment_method_id = :payment_method_id,
+  created_date = :created_date, total_paid = :total_paid
+WHERE order_id = :order_id AND customer_id = :customer_id;
+
+
+-- create a new cart
+-- Colons before words indicate variables that will be provided by the backend
+
+INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
+VALUES (:customer_id, NULL, NULL, true, :created_date, NULL, NULL);
+
+
 
 -- Get all categories
 -- Colons before words indicate variables that will be provided by the backend

@@ -24,6 +24,8 @@ function getSiteInfo (req, res, next) {
     return;
   }
 
+  console.log(req.context);
+
   // Context can be accessed from req.context in all route handlers (needed for site navbar)
   req.context = {};
 
@@ -72,6 +74,8 @@ function getSiteInfo (req, res, next) {
       }
 
       req.context.cartInfo = rows[0];
+      req.context.cartInfo.hasItems = Boolean(req.context.cartInfo.itemCount);
+
       // Fix for blank cart item count when no products are in cart
       req.context.cartInfo.itemCount = req.context.cartInfo.itemCount || 0;
       next();
