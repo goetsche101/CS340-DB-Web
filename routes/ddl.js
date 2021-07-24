@@ -13,7 +13,7 @@ function createTables (req, res, next) {
 
   var createString = `
   SET FOREIGN_KEY_CHECKS = 0;
-  DROP TABLE  Categories;
+  DROP TABLE Categories;
   DROP TABLE Products;
   DROP TABLE Addresses;
   DROP TABLE Customers;

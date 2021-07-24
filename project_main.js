@@ -24,8 +24,6 @@ function getSiteInfo (req, res, next) {
     return;
   }
 
-  console.log(req.context);
-
   // Context can be accessed from req.context in all route handlers (needed for site navbar)
   req.context = {};
 
@@ -117,6 +115,9 @@ app.use(orders);
 
 const cart = require ('./routes/cart.js');
 app.use(cart);
+
+const login = require ('./routes/login.js');
+app.use(login);
 
 app.use(function (req, res) {
 

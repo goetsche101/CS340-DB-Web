@@ -1,0 +1,45 @@
+<style>
+  input {
+    margin-bottom: 10px;
+  }
+</style>
+
+<h1>Login Or Register:</h1>
+<br>
+<div class="d-flex justify-content-around p-2">
+  <div>
+  <h1>Login</h1>
+    <form class="row g-3" method="post" action="/login">
+      <div class="col-auto">
+        <label for="loginName" class="form-label">Full Name</label>
+        <input id="loginName" type="text" name="name" class="form-control" required>
+
+        <label for="loginPassword" class="form-label">Password</label>
+        <input id="loginPassword" type="password" name="password" class="form-control" required>
+        <button type="submit" class="btn btn-primary mb-3">Sign In</button>
+      </div>
+    </form>
+  </div>
+  <div>
+    <h1>Register</h1>
+    <form class="row g-3" method="post" action="/customers">
+      <div class="col-auto">
+        <input type="hidden" name="AddRow" value="true">
+        
+        <label for="regName" class="form-label">Full Name</label>
+        <input id="regName" type="text" name="name" class="form-control" required>
+        
+        <label for="regPass" class="form-label">Password</label>
+        <input id="regPass" type="password" name="password" class="form-control" required>
+        
+        <label for="regPass2" class="form-label">Confirm Password</label>
+        <input id="regPass2" type="password" name="password2" class="form-control" required>
+        
+        <label for="regPhone" class="form-label">Phone Number</label>
+        <input id="regPhone" type="text" name="phone" class="form-control" required>
+        <button type="submit" class="btn btn-primary mb-3">Register</button>
+      </div>
+    </form>
+  </div>
+</div>
+
