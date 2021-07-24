@@ -11,18 +11,21 @@ module.exports = router
 
 function createTables (req, res, next) {
 
+  // Removed these since if the tables do not exist at all it causes the query to have an error
+
+  // SET FOREIGN_KEY_CHECKS = 0;
+  // DROP TABLE Categories;
+  // DROP TABLE Products;
+  // DROP TABLE Addresses;
+  // DROP TABLE Customers;
+  // DROP TABLE Products_categories_relation;
+  // DROP TABLE Emails;
+  // DROP TABLE Payment_methods;
+  // DROP TABLE Orders;
+  // DROP TABLE Orders_products_relation;
+  // SET FOREIGN_KEY_CHECKS = 1;
+
   var createString = `
-  SET FOREIGN_KEY_CHECKS = 0;
-  DROP TABLE Categories;
-  DROP TABLE Products;
-  DROP TABLE Addresses;
-  DROP TABLE Customers;
-  DROP TABLE Products_categories_relation;
-  DROP TABLE Emails;
-  DROP TABLE Payment_methods;
-  DROP TABLE Orders;
-  DROP TABLE Orders_products_relation;
-  SET FOREIGN_KEY_CHECKS = 1;
 
   CREATE TABLE IF NOT EXISTS Customers (
       customer_id int NOT NULL AUTO_INCREMENT,
