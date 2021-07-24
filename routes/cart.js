@@ -98,6 +98,12 @@ router.get('/cart', function(req, res, next) {
 
 
           context.cart = cart;
+
+          context.is_possible_to_order = (
+            Boolean(context.addresses.length) &&
+            Boolean(context.payment_methods.length) &&
+            Boolean(context.cart.products.length)
+          );
     
           res.render('cart', context);
         });

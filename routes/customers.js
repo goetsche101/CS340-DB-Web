@@ -26,6 +26,20 @@ router.get('/customers', function(req, res, next) {
 });
 
 router.post('/customers',function (req,res,next) {
+
+  // Clean up data sent by the front end
+  if (!req.body.is_admin) {
+    req.body.is_admin = 0;
+  }
+
+  if (!req.body.customer_type) {
+    req.body.customer_type = 'customer';
+  }
+
+  if (typeof req.body.phone === 'string') {
+    req.body.phone = req.body.phone.replace(/[^0-9]/g, '');
+  }
+
   if (req.body['AddRow']) {
         let iString = 'INSERT INTO Customers (`password`,`customer_type`,`name`,`phone`,`is_admin`) VALUES ("'
         +req.body.password
