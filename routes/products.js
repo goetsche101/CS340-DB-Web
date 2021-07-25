@@ -33,8 +33,19 @@ router.get('/products', function(req, res, next) {
     }
 
     context.products = rows;
-    res.render('products', context);
-  });
+
+
+    mysql.pool.query('SELECT * FROM Categories', function(err, rows, fields){
+
+      if (err) {
+        next(err);
+        return;
+      }
+      context.categories = rows;
+      res.render('products', context)
+    });/*end mysql.pool inner*/
+  });/*end mysql.pool outer*/
+
 });
 
 router.post('/products/add', function (req, res, next) {
@@ -60,14 +71,23 @@ router.post('/products/add', function (req, res, next) {
   const query = 'INSERT INTO Products (description, in_stock_qty, price) VALUES (?, ?, ?)';
   const values = [req.body.description, req.body.in_stock_qty, req.body.price];
 
-  mysql.pool.query(query, values, function (err) {
-    if (err) {
-      console.log(err);
-      next(err);
+  mysql.pool.query(query, values, function (error, results, fields) {
+    if (error) {
+      console.log(error);
+      next(error);
       return;
     }
 
+    for(const key in Object.keys(req.body.categories)){
+      const qstring =`INSERT INTO Products_categories_relation(category_id, product_id) VALUES(`+req.body.categories[key]+`,`+results.insertId+`)`
+      mysql.pool.query(qstring, function(error, results, fields){
+        if(error){
+          console.log(error)
+          next(error)
+          return
+        }
+      })/*end inner mysql*/
+    }/*end for*/
     res.redirect('/products');
-  });
-});
-
+  });/*end outer mysql*/
+});/* end post*/

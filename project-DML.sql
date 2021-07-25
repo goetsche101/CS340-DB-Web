@@ -240,3 +240,7 @@ WHERE Products_categories_relation.category_id = :category_id;
 
 INSERT INTO Products (description, in_stock_qty, price)
 VALUES (:description, :in_stock_qty, :price);
+
+--Query to add categories to Products
+INSERT INTO Products_categories_relation(category_id, product_id)
+VALUES(:category_id, :product_id)
