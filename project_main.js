@@ -5,12 +5,14 @@ var mysql = require('./dbcon.js');
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout:'main'});
 var session = require('express-session');
+var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var request = require('request');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(session({secret:'SuperSecretPassword'}));
+app.use(cookieParser());
 app.use(express.static('public'));
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
@@ -19,8 +21,20 @@ app.set('port', process.argv[2]);
 // This gets run before every route handler
 function getSiteInfo (req, res, next) {
 
-  if (req.originalUrl.toLowerCase().includes('create-tables')) {
+  // Skip getting customer and cart info for certain URLs where it is possible to access without being logged in
+  const url = req.originalUrl.toLowerCase();
+  if (
+    url.includes('create-tables') ||
+    url.includes('login') ||
+    url.includes('logout') ||
+    req.body.isRegisteringNewCustomer
+  ) {
     next();
+    return;
+  }
+
+  if (!req.cookies.loggedInCustomerId) {
+    res.redirect('/login');
     return;
   }
 
@@ -35,7 +49,7 @@ function getSiteInfo (req, res, next) {
     FROM Customers
     WHERE customer_id = ?;
   `;
-  const customerQueryValues = [customerId];
+  const customerQueryValues = [req.cookies.loggedInCustomerId];
 
   mysql.pool.query(customerQuery, customerQueryValues, function (err, rows) {
     if (err) {
@@ -45,6 +59,8 @@ function getSiteInfo (req, res, next) {
 
     if (!rows || !rows.length) {
       console.error(`Customer with id ${customerId} not found!`);
+      res.clearCookie('loggedInCustomerId')
+      res.redirect('/login');
       return;
     }
 
