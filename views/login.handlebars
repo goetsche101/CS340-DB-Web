@@ -11,8 +11,8 @@
   <h1>Login</h1>
     <form class="row g-3" method="post" action="/login">
       <div class="col-auto">
-        <label for="loginName" class="form-label">Full Name</label>
-        <input id="loginName" type="text" name="name" class="form-control" required>
+        <label for="loginEmail" class="form-label">Email</label>
+        <input id="loginEmail" type="text" name="email_address" class="form-control" required>
 
         <label for="loginPassword" class="form-label">Password</label>
         <input id="loginPassword" type="password" name="password" class="form-control" required>
@@ -25,9 +25,13 @@
     <form class="row g-3" method="post" action="/customers">
       <div class="col-auto">
         <input type="hidden" name="AddRow" value="true">
+        <input type="hidden" name="isRegisteringNewCustomer" value="true">
         
         <label for="regName" class="form-label">Full Name</label>
         <input id="regName" type="text" name="name" class="form-control" required>
+        
+        <label for="regEmail" class="form-label">Email</label>
+        <input id="regEmail" type="text" name="email_address" class="form-control" required>
         
         <label for="regPass" class="form-label">Password</label>
         <input id="regPass" type="password" name="password" class="form-control" required>

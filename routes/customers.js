@@ -54,19 +54,39 @@ router.post('/customers',function (req,res,next) {
           return
         }
 
-        // Create a cart for the new customer
-        const createCartQuery = `
+        // Create a cart for the new customer and an email address if specified
+        let additionalEntriesQuery = `
           INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
           VALUES (?, NULL, NULL, true, ?, NULL, NULL);
         `;
-        const createCartValues = [result.insertId, new Date()];
+        const additionalEntriesValues = [result.insertId, new Date()];
 
-        mysql.pool.query(createCartQuery, createCartValues, function (err, result) {
+        if (req.body.email_address) {
+          additionalEntriesQuery += `
+            INSERT INTO Emails (customer_id, email_address, is_primary)
+            VALUES (?, ?, true);
+        `;
+
+        additionalEntriesValues.push(result.insertId);
+        additionalEntriesValues.push(req.body.email_address.toLowerCase().trim());
+        }
+
+        console.log(req.body, additionalEntriesQuery);
+
+        mysql.pool.query(additionalEntriesQuery, additionalEntriesValues, function (err) {
           if(err){
-            next(err)
-            return
+            next(err);
+            return;
           }
 
+          if (req.body.isRegisteringNewCustomer) {
+            res.cookie('loggedInCustomerId', result.insertId);
+            res.redirect('/');
+            return;
+          }
+
+
+          res.redirect('/customers');
         });
       }); /* Insert Into */
   }else if (req.body['DeleteRow']){
@@ -80,6 +100,9 @@ router.post('/customers',function (req,res,next) {
           next(err)
           return
         } /*endif*/
+
+
+        res.redirect('/customers');
       })/*end mysql.query*/
   }else if(req.body['EditRow']){
     console.log(req.body['EditRow'])
@@ -95,8 +118,45 @@ router.post('/customers',function (req,res,next) {
             next(err)
             return
           }
+
+
+          res.redirect('/customers');
         }
       )
   }/*end add item if*/
-  res.redirect('/customers')
 }); /*End app.Post('/') */
+
+
+router.post('/login', function (req, res, next) {
+
+  if (req.body.email_address) {
+    req.body.email_address = req.body.email_address.toLowerCase().trim();
+  }
+
+  const customerQuery = `
+    SELECT Emails.*, Customers.* FROM Emails
+    INNER JOIN Customers ON Customers.customer_id = Emails.customer_id
+    WHERE Emails.email_address = ? AND Customers.password = ?;
+  `;
+  const customerValues = [req.body.email_address, req.body.password];
+
+  mysql.pool.query(customerQuery, customerValues, function (err, customer) {
+
+    if (err) {
+      next(err);
+      return;
+    }
+
+    if (customer.length) {
+      res.cookie('loggedInCustomerId', customer[0].customer_id);
+    }
+
+    res.redirect('/');
+  });
+});
+
+router.get('/logout', function (req, res, next) {
+
+  res.clearCookie('loggedInCustomerId');
+  res.redirect('/');
+});
