@@ -33,15 +33,17 @@ function getSiteInfo (req, res, next) {
     return;
   }
 
-  if (!req.cookies.loggedInCustomerId) {
-    res.redirect('/login');
-    return;
-  }
+  // if (!req.cookies.loggedInCustomerId) {
+  //   res.redirect('/login');
+  //   return;
+  // }
 
   // Context can be accessed from req.context in all route handlers (needed for site navbar)
   req.context = {};
 
-  // TODO: get logged in customer id from cookie or handle no customer logged in
+  // Always log in as the admin user as per requirements
+
+  // const customerId = req.cookies.loggedInCustomerId;
   const customerId = 1;
 
   const customerQuery = `
@@ -49,7 +51,7 @@ function getSiteInfo (req, res, next) {
     FROM Customers
     WHERE customer_id = ?;
   `;
-  const customerQueryValues = [req.cookies.loggedInCustomerId];
+  const customerQueryValues = [customerId];
 
   mysql.pool.query(customerQuery, customerQueryValues, function (err, rows) {
     if (err) {
