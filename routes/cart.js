@@ -164,28 +164,33 @@ router.post('/cart/add-product', function (req, res, next) {
 
 router.post('/cart/update-product-quantities', function (req, res, next) {
 
-  var context = req.context;
   const orderId = req.body.order_id;
-  const productIds = req.body.product_ids;
-  const quantities = req.body.ordered_quantities;
   let updateQuery = '';
 
-  // The request will send product_ids and ordered_quantities as two arrays of the same length.
-  // Each product id in product_ids corresponds to a quantity at the same index in ordered_quantities.
-  // If a quantity is set to 0 that product will be removed.
-  for (let i = 0; i < productIds.length; i++) {
-    if (quantities[i] === '0') {
+  // Loop through all the entries in the request body.  If the entry key starts with 'ordered_quantity_'
+  // the number at the end of the key will be a product id and the value will be the new quantity
+  for (const keyVal of Object.entries(req.body)) {
+    const key = keyVal[0];
+    const value = keyVal[1];
+
+    if (!key.startsWith('ordered_quantity_')) {
+      continue;
+    }
+
+    const productId = key.replace('ordered_quantity_', '');
+    const newQuantity = value;
+    if (newQuantity === '0') {
       updateQuery += `
       DELETE FROM Orders_products_relation
-      WHERE order_id = ${orderId} AND product_id = ${productIds[i]};
+      WHERE order_id = ${orderId} AND product_id = ${productId};
 
     `;
     }
     else {
       updateQuery += `
         UPDATE Orders_products_relation
-        SET ordered_quantity = ${quantities[i]}
-        WHERE order_id = ${orderId} AND product_id = ${productIds[i]};
+        SET ordered_quantity = ${newQuantity}
+        WHERE order_id = ${orderId} AND product_id = ${productId};
 
       `;
     }
