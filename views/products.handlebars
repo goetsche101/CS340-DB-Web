@@ -7,6 +7,7 @@
       <th scope="col">Description</th>
       <th scope="col">Price</th>
       <th scope="col"></th>
+      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
@@ -15,10 +16,24 @@
         <tr>
           <td>
             <input type="hidden" name="product_id" value="{{this.product_id}}">
-            {{this.in_stock_qty}}
+            <input type="number" class="form-control" min="-1" step="1" name="in_stock_qty" value="{{this.in_stock_qty}}">
           </td>
-          <td>{{this.description}}</td>
-          <td>{{this.price}}</td>
+          <td>
+            <input type="text" class="form-control" name="description" value="{{this.description}}">
+          </td>
+          <td>
+            <div class="input-group mb-3">
+              <span class="input-group-text">$</span>
+              <input type="number" class="form-control" min="0.00" step="0.01" name="price" value="{{this.price}}">
+            </div>
+          </td>
+          <td>
+            <button class="btn btn-info" type="submit" formaction="/products/update">
+              <strong>
+                <i class="bi bi-cart-plus">&nbsp;</i> Update
+              </strong>
+            </button>
+          </td>
           <td>
             <button class="btn btn-secondary" type="submit">
               <strong>

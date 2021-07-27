@@ -29,7 +29,7 @@ router.get('/products', function(req, res, next) {
     }
 
     for (const product of rows) {
-      product.price = '$' + product.price;
+      product.price = product.price.toFixed(2);
     }
 
     context.products = rows;
@@ -91,3 +91,42 @@ router.post('/products/add', function (req, res, next) {
     res.redirect('/products');
   });/*end outer mysql*/
 });/* end post*/
+
+
+router.post('/products/update', function (req, res, next) {
+
+  if (
+    !req.body.product_id ||
+    !req.body.description || !req.body.description.trim().length ||
+    !req.body.in_stock_qty || !req.body.in_stock_qty.length ||
+    !req.body.price || !req.body.price.length
+  ) {
+    res.redirect('/products');
+    return;
+  }
+
+  // Don't allow certain strings used to concatinate data in certain requests
+  for (const divider of ['<END>', '<SPLIT>']) {
+    if (req.body.description.includes(divider)) {
+      res.redirect('/products');
+      return;
+    }
+  }
+
+  const query = `
+    UPDATE Products
+    SET description = ?, in_stock_qty = ?, price = ?
+    WHERE product_id = ?;
+  `;
+  const values = [req.body.description, req.body.in_stock_qty, req.body.price, req.body.product_id];
+
+  mysql.pool.query(query, values, function (error, results, fields) {
+    if (error) {
+      console.log(error);
+      next(error);
+      return;
+    }
+
+    res.redirect('/products');
+  });
+});
