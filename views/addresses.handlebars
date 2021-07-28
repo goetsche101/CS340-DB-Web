@@ -35,8 +35,15 @@
     <form method="post">
       <tr>
         <td></td>
+        <td>
+          <select class='form-select' name = 'customer_id'>
+            {{#each customers}}
+            <option value={{customer_id}}>{{name}}</option>
+            {{/each}}
+          </select>
+        </td>
         {{#each column_list}}
-        <td><input type="text" name={{this.Field}} id={{this.Field}}></td>
+        <td><input class="form-control" type="text" name={{this.Field}} id={{this.Field}}></td>
         {{/each}}
         <td><input type = 'submit' name = 'AddRow' value='AddRow'></td>
       </tr>
