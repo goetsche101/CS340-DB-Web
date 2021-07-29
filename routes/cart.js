@@ -100,8 +100,8 @@ router.get('/cart', function(req, res, next) {
           context.cart = cart;
 
           context.is_possible_to_order = (
-            Boolean(context.addresses.length) &&
-            Boolean(context.payment_methods.length) &&
+            Boolean(cart.address_id) &&
+            Boolean(cart.payment_method_id) &&
             Boolean(context.cart.products.length)
           );
     
@@ -216,6 +216,64 @@ router.post('/cart/remove_product/:product_id', function (req, res, next) {
   const updateQuery = `
     DELETE FROM Orders_products_relation
     WHERE order_id = ${orderId} AND product_id = ${req.params.product_id};
+  `;
+
+  mysql.pool.query(updateQuery, function (err, rows) {
+
+    if (err) {
+      next(err);
+      return;
+    }
+
+    res.redirect('/cart');
+  });
+});
+
+
+router.post('/cart/set-address', function (req, res, next) {
+
+  var context = req.context;
+  const orderId = req.body.order_id;
+  const addressId = isNaN(parseInt(req.body.address_id)) ? null : req.body.address_id;
+
+  if (!orderId) {
+    res.redirect('/cart');
+    return;
+  }
+
+  const updateQuery = `
+    UPDATE Orders
+    SET address_id = ${addressId}
+    WHERE order_id = ${orderId} AND is_cart = true;
+  `;
+
+  mysql.pool.query(updateQuery, function (err, rows) {
+
+    if (err) {
+      next(err);
+      return;
+    }
+
+    res.redirect('/cart');
+  });
+});
+
+
+router.post('/cart/set-payment-method', function (req, res, next) {
+
+  var context = req.context;
+  const orderId = req.body.order_id;
+  const paymentMethodId = isNaN(parseInt(req.body.payment_method_id)) ? null : req.body.payment_method_id;
+
+  if (!orderId) {
+    res.redirect('/cart');
+    return;
+  }
+
+  const updateQuery = `
+    UPDATE Orders
+    SET payment_method_id = ${paymentMethodId}
+    WHERE order_id = ${orderId} AND is_cart = true;
   `;
 
   mysql.pool.query(updateQuery, function (err, rows) {
