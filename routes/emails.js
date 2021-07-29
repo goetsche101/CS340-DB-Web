@@ -7,7 +7,7 @@ module.exports = router
 router.get('/emails', function(req, res, next) {
   var context = req.context
   /* Select */
-  var emails = 'SELECT email_id, c.name, email_address, is_primary FROM Emails E LEFT JOIN Customers C ON e.customer_id = c.customer_id'
+  var emails = 'SELECT email_id, c.name, email_address, is_primary FROM Emails e LEFT JOIN Customers c ON e.customer_id = c.customer_id'
   mysql.pool.query(emails, function(err, rows, fields){
     context.data_rows = rows
     if(err){
