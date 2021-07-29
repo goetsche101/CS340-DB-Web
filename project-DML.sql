@@ -112,7 +112,8 @@ DELETE FROM Categories WHERE category_id = :category_id;
 -- Colons before words indicate variables that will be provided by the backend
 
 SELECT customer_id, password, customer_type, name, phone, is_admin FROM Customers
-
+--Display Dropdowns
+SELECT customer_id, name FROM Customers
 
 -- Query to insert a new customer
 -- Colons before words indicate variables that will be provided by the backend
