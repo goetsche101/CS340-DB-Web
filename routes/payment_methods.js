@@ -6,22 +6,29 @@ module.exports = router
 
 router.get('/payment_methods', function(req, res, next) {
   var context = req.context
+  let sql ='SELECT payment_method_id, c.name, type, credit_card_number, paypal_email FROM Payment_methods p LEFT JOIN Customers c on p.customer_id = c.customer_id'
   /* Select */
-  mysql.pool.query('SELECT * FROM Payment_methods', function(err, rows, fields){
+  mysql.pool.query(sql, function(err, rows, fields){
     context.data_rows = rows
     if(err){
       next(err)
       return
     }
-    console.log(rows)
     /* Create empty row for insertions */
-    mysql.pool.query('SHOW COLUMNS FROM Payment_methods WHERE FIELD != \'payment_method_id\'', function(err, rows, fields){
+    mysql.pool.query('SHOW COLUMNS FROM Payment_methods WHERE FIELD != \'payment_method_id\' AND FIELD != \'Customer_id\'', function(err, rows, fields){
     context.column_list = rows
     if(err){
       next(err)
       return
     }
-    res.render('payment_methods', context)
+    mysql.pool.query('SELECT customer_id, name FROM Customers', function(err, rows, fields){
+      context.customers = rows
+      if(err){
+        next(err)
+        return
+      }
+      res.render('payment_methods', context)
+      });
     });
   });
 });
@@ -29,14 +36,9 @@ router.get('/payment_methods', function(req, res, next) {
 router.post('/payment_methods',function (req,res,next) {
   console.log(req.body)
   if (req.body['AddRow']) {
-        let iString = 'INSERT INTO Payment_methods (`customer_id`,`type`,`credit_card_number`,`paypal_email`) VALUES ("'
-        +req.body.customer_id
-        +'","'+req.body.type
-        +'","'+req.body.credit_card_number
-        +'","'+req.body.paypal_email
-        + '")';
-        console.log(iString)
-      mysql.pool.query(iString,function (err) {
+        let insert_sql = 'INSERT INTO Payment_methods (`customer_id`,`type`,`credit_card_number`,`paypal_email`) VALUES (?,?,?,?)'
+        let values = [req.body.customer_id,req.body.type,req.body.credit_card_number,req.body.paypal_email]
+      mysql.pool.query(insert_sql, values,function (err) {
         if(err){
           next(err)
           return
