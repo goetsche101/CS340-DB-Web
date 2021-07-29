@@ -7,7 +7,8 @@ module.exports = router
 router.get('/addresses', function(req, res, next) {
   var context = req.context
   /* Select */
-  mysql.pool.query('SELECT address_id, customer_id, address1, address2, city, state, zip FROM Addresses', function(err, rows, fields){
+  var address = 'SELECT address_id, C.name, address1, address2, city, state, zip FROM Addresses A LEFT JOIN Customers C ON A.customer_id = C.Customer_id'
+  mysql.pool.query(address, function(err, rows, fields){
     context.data_rows = rows
     if(err){
       next(err)

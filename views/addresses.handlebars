@@ -4,7 +4,7 @@
   <thead>
     <tr class="table-success">
       <th scope="col">Address ID</th>
-      <th scope="col">Customer ID</th>
+      <th scope="col">Customer Name</th>
       <th scope="col">Address line 1</th>
       <th scope="col">Address line 2</th>
       <th scope="col">City</th>
@@ -18,7 +18,7 @@
     <tr>
       {{#each data_rows}}
         <td>{{this.address_id}}</td>
-        <td>{{this.customer_id}}</td>
+        <td>{{this.name}}</td>
         <td>{{this.address1}}</td>
         <td>{{this.address2}}</td>
         <td>{{this.city}}</td>
