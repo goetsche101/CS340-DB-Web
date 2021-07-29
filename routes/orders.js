@@ -115,7 +115,7 @@ router.post('/orders/create', function (req, res, next) {
 
   var context = req.context;
 
-  if (!req.body.address_id || !req.body.payment_method_id || !context.cartInfo.itemCount) {
+  if (!context.cartInfo.itemCount) {
     res.redirect('/cart');
     return;
   }
@@ -147,15 +147,13 @@ router.post('/orders/create', function (req, res, next) {
     // Convert the cart into an order and create a new cart
     const orderQuery = `
       UPDATE Orders
-      SET is_cart = false, address_id = ?, payment_method_id = ?, created_date = ?, total_paid = ?
+      SET is_cart = false, created_date = ?, total_paid = ?
       WHERE order_id = ? AND customer_id = ?;
 
       INSERT INTO Orders (customer_id, address_id, payment_method_id, is_cart, created_date, shipped_date, total_paid)
       VALUES (?, NULL, NULL, true, ?, NULL, NULL);
     `;
     const orderValues = [
-      req.body.address_id,
-      req.body.payment_method_id,
       new Date(),
       cartTotalCost,
       context.cartInfo.order_id,
