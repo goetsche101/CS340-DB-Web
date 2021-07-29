@@ -7,35 +7,38 @@ module.exports = router
 router.get('/emails', function(req, res, next) {
   var context = req.context
   /* Select */
-  mysql.pool.query('SELECT * FROM Emails', function(err, rows, fields){
+  var emails = 'SELECT email_id, c.name, email_address, is_primary FROM Emails E LEFT JOIN Customers C ON e.customer_id = c.customer_id'
+  mysql.pool.query(emails, function(err, rows, fields){
     context.data_rows = rows
     if(err){
       next(err)
       return
     }
-    console.log(rows)
     /* Create empty row for insertions */
-    mysql.pool.query('SHOW COLUMNS FROM Emails WHERE FIELD != \'email_id\'', function(err, rows, fields){
+    mysql.pool.query('SHOW COLUMNS FROM Emails WHERE FIELD != \'email_id\'AND FIELD != \'Customer_id\'', function(err, rows, fields){
     context.column_list = rows
     if(err){
       next(err)
       return
     }
-    res.render('emails', context)
-    });
-  });
+    mysql.pool.query('SELECT customer_id, name FROM Customers', function(err, rows, fields){
+      context.customers = rows
+      if(err){
+        next(err)
+        return
+      }
+      res.render('emails', context)
+      });/*End Customers select */
+    }); /* end show columns */
+  }); /* end SELECT ALL */
 });
 
 router.post('/emails',function (req,res,next) {
   console.log(req.body)
   if (req.body['AddRow']) {
-        let iString = 'INSERT INTO Emails (`customer_id`,`email_address`,`is_primary`) VALUES ("'
-        +req.body.customer_id
-        +'","'+req.body.email_address
-        +'","'+req.body.is_primary
-        + '")';
-        console.log(iString)
-      mysql.pool.query(iString,function (err) {
+        let insert_sql = 'INSERT INTO Emails (`customer_id`,`email_address`,`is_primary`) VALUES (?,?,?)'
+        let values = [req.body.customer_id ,req.body.email_address,req.body.is_primary]
+      mysql.pool.query(insert_sql, values,function (err) {
         if(err){
           next(err)
           return
