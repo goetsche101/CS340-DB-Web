@@ -4,7 +4,7 @@
   <thead>
     <tr class="table-success">
       <th scope="col">Address ID</th>
-      <th scope="col">Customer ID</th>
+      <th scope="col">Customer Name</th>
       <th scope="col">Address line 1</th>
       <th scope="col">Address line 2</th>
       <th scope="col">City</th>
@@ -18,7 +18,7 @@
     <tr>
       {{#each data_rows}}
         <td>{{this.address_id}}</td>
-        <td>{{this.customer_id}}</td>
+        <td>{{this.name}}</td>
         <td>{{this.address1}}</td>
         <td>{{this.address2}}</td>
         <td>{{this.city}}</td>
@@ -27,7 +27,7 @@
         <td>
           <form method="post">
             <input type='hidden' name='address_id' value = {{this.address_id}}>
-            <input type = 'submit' name = 'DeleteRow' value='DeleteRow'>
+            <input class="btn btn-danger" type = 'submit' name = 'DeleteRow' value='DeleteRow'>
           </form>
         </td>
     </tr>
@@ -35,10 +35,17 @@
     <form method="post">
       <tr>
         <td></td>
+        <td>
+          <select class='form-select' name = 'customer_id'>
+            {{#each customers}}
+            <option value={{customer_id}}>{{name}}</option>
+            {{/each}}
+          </select>
+        </td>
         {{#each column_list}}
-        <td><input type="text" name={{this.Field}} id={{this.Field}}></td>
+        <td><input class="form-control" type="text" name={{this.Field}} id={{this.Field}}></td>
         {{/each}}
-        <td><input type = 'submit' name = 'AddRow' value='AddRow'></td>
+        <td><input class="btn btn-success" type='submit' name = 'AddRow' value='AddRow'></td>
       </tr>
     </form>
   </tbody>

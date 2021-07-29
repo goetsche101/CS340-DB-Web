@@ -20,7 +20,7 @@ WHERE Orders.customer_id = :customer_id AND Orders.is_cart = true GROUP BY Order
 -- Colons before words indicate variables that will be provided by the backend
 
 SELECT * FROM Addresses WHERE customer_id = :customer_id;
-
+SELECT address_id, C.name, address1, address2, city, state, zip FROM Addresses A LEFT JOIN Customers C ON A.customer_id = C.Customer_id
 
 -- Query to insert new addresses
 -- Colons before words indicate variables that will be provided by the backend
@@ -111,8 +111,9 @@ DELETE FROM Categories WHERE category_id = :category_id;
 -- Query to select all customers
 -- Colons before words indicate variables that will be provided by the backend
 
-SELECT * FROM Customers;
-
+SELECT customer_id, password, customer_type, name, phone, is_admin FROM Customers
+--Display Dropdowns
+SELECT customer_id, name FROM Customers
 
 -- Query to insert a new customer
 -- Colons before words indicate variables that will be provided by the backend
@@ -147,7 +148,7 @@ WHERE customer_id = :customer_id;
 -- Colons before words indicate variables that will be provided by the backend
 
 SELECT * FROM Emails WHERE customer_id = :customer_id;
-
+SELECT email_id, c.name, email_address, is_primary FROM Emails e LEFT JOIN Customers c ON e.customer_id = c.customer_id
 
 -- Query to insert a new email
 -- Colons before words indicate variables that will be provided by the backend
@@ -244,3 +245,6 @@ VALUES (:description, :in_stock_qty, :price);
 --Query to add categories to Products
 INSERT INTO Products_categories_relation(category_id, product_id)
 VALUES(:category_id, :product_id)
+
+-- Query used to build Table headers
+SHOW COLUMNS FROM Payment_methods WHERE FIELD != '<table_key>' AND FIELD != 'Customer_id'

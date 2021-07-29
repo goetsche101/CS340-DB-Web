@@ -7,7 +7,7 @@ module.exports = router
 router.get('/customers', function(req, res, next) {
   var context = req.context
   /* Select */
-  mysql.pool.query('SELECT * FROM Customers', function(err, rows, fields){
+  mysql.pool.query('SELECT customer_id, password, customer_type, name, phone, is_admin FROM Customers', function(err, rows, fields){
     context.data_rows = rows
     if(err){
       next(err)
@@ -41,14 +41,9 @@ router.post('/customers',function (req,res,next) {
   }
 
   if (req.body['AddRow']) {
-        let iString = 'INSERT INTO Customers (`password`,`customer_type`,`name`,`phone`,`is_admin`) VALUES ("'
-        +req.body.password
-        +'","'+req.body.customer_type
-        +'","'+req.body.name
-        +'","'+req.body.phone
-        +'","'+req.body.is_admin
-        + '")';
-      mysql.pool.query(iString,function (err, result) {
+        let sql = 'INSERT INTO Customers (`password`,`customer_type`,`name`,`phone`,`is_admin`) VALUES (?,?,?,?,?)'
+        let values = [req.body.password,req.body.customer_type,req.body.name,req.body.phone,req.body.is_admin]
+      mysql.pool.query(sql,values,function (err, result) {
         if(err){
           next(err)
           return
@@ -105,21 +100,13 @@ router.post('/customers',function (req,res,next) {
         res.redirect('/customers');
       })/*end mysql.query*/
   }else if(req.body['EditRow']){
-    console.log(req.body['EditRow'])
-          let uString = 'UPDATE Customers SET password ="'+req.body.password
-          +'",customer_type="'+ req.body.customer_type
-          +'",name="'+ req.body.name
-          +'",phone="'+ req.body.phone
-          +'",is_admin="'+ req.body.is_admin
-          +'"WHERE customer_id = ' + req.body.customer_id
-        console.log(uString)
-        mysql.pool.query(uString, function(err){
+          let sql = 'UPDATE Customers SET password =?, customer_type=?,name=?,phone=?,is_admin=? WHERE customer_id=?'
+          let updates = [req.body.password,req.body.customer_type,req.body.name,req.body.phone,req.body.is_admin,req.body.customer_id]
+        mysql.pool.query(sql, updates, function(err){
           if(err){
             next(err)
             return
           }
-
-
           res.redirect('/customers');
         }
       )
